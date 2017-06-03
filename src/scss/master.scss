@@ -1,0 +1,36 @@
+// ------------------------------------------------------------------------
+// Geocomplete: master.scss
+// ------------------------------------------------------------------------
+
+//
+// Variables
+//
+$base-font-size : 14px !default;
+$base-padding   : .5em !default;
+$bg-highlight   : rgba(0,0,0,.03) !default;
+
+
+//
+// Styles
+//
+.pac-icon {
+  display: none !important;
+}
+
+.pac-item {
+  cursor: pointer !important;
+  font-size: $base-font-size * .85 !important;
+  padding: $base-padding !important;
+
+  &:hover {
+    background-color: $bg-highlight !important; 
+  }
+}
+
+.pac-item-selected {
+  background-color: $bg-highlight !important;
+}
+
+.pac-item-query {
+  font-size: $base-font-size !important;
+}

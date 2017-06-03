@@ -1,0 +1,106 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Geocomplete Visual Test</title>
+        <meta name="description" content="">
+        <meta name="author" content="Trent Mentink">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyA0SLOL7qb7Ch3gVhP0yBCVYCp1_lVwF60"></script>
+        <link type="text/css" rel="Stylesheet" href="css/semantic-ui.min.css" />
+        <link type="text/css" rel="Stylesheet" href="css/css-util.min.css" />
+        <link type="text/css" rel="Stylesheet" href="../../dist/jquery.geocomplete.css" />
+        <style type="text/css">
+          #padding {
+            height: 100vh;
+          }
+        </style>
+    </head>
+    <body>
+
+      <div id="modal" class="ui small modal">
+        <div class="header">
+          Search Location
+        </div>
+
+        <div class="content p-2">
+          
+          <div class="ui form">
+            <div class="field">
+              <label>Address:</label>
+              <div class="ui input">
+                <input id="txtAddress" type="text" placeholder="Start typing an address">
+              </div>
+            </div>
+
+            <div class="two fields">
+              <div class="field">
+                <label>Country:</label>
+                <select id="ddlCountry" class="ui dropdown">
+                  <option value="">Country</option>
+                  <option value="1">United States</option>
+                  <option value="2">Mexico</option>
+                  <option value="3">Canada</option>
+                  <option value="4">Chile</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>State:</label>
+                <div class="ui input">
+                  <input id="txtState" type="text">
+                </div>
+              </div>
+            </div>
+
+            <div class="three fields">
+              <div class="field">
+                <label>County:</label>
+                <div class="ui input">
+                  <input id="txtCounty" type="text">
+                </div>
+              </div>
+
+              <div class="field">
+                <label>City:</label>
+                <div class="ui input">
+                  <input id="txtCity" type="text">
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Zip Code:</label>
+                <div class="ui input">
+                  <input id="txtZipCode" type="text">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="padding"></div>
+        </div>
+      </div>
+
+
+        <!-- SCRIPTS
+        ===========================================-->
+        <script src="js/jquery.min.js"></script>
+        <script src="js/semantic-ui.min.js"></script>
+        <script src="../../dist/jquery.geocomplete.js"></script>
+        <script type="text/javascript">
+          $("#modal").modal("show");
+          $("#txtAddress").geocomplete({
+            fields: {
+              txtAddress: "street address",
+              txtCity: "city",
+              txtCounty: "county",
+              txtState: "short state",
+              ddlCountry: "country",
+              txtZipCode: "zipcode"
+            }
+          });
+        </script>
+    </body>
+</html>
