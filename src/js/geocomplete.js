@@ -135,7 +135,7 @@
   // Global Variables
   // ----------------------------------------------------------------------
 
-  let Index = 0
+  let Index = -1
   let StyleSheet
 
 
@@ -153,6 +153,7 @@
 
       this.element  = element
       this.fields   = _formatFieldIds(config.fields)
+      this.index    = Index += 1
       this.obj      = new google.maps.places.Autocomplete(element, config)
 
       // add event listenter to fill the fields when the place is changed
@@ -170,9 +171,9 @@
         StyleSheet = StyleSheet || _createStyleSheet()
 
         // delay function to ensure pac-container exists in DOM
-        setTimeout(function() {
+        setTimeout(() => {
           const $element       = $(element)
-          const $pac_container = $(".pac-container")[Index]
+          const $pac_container = $(".pac-container")[this.index]
           const left           = `${_calcLeftPosition($element)}px !important`
           const top            = `${_calcTopPosition($element)}px !important`
           $pac_container.id    = `pac-container_${element.id}`
@@ -183,7 +184,6 @@
             .css({position: "relative"})
             .append($pac_container)
 
-          Index += 1
         }, 1000)
       }
     }
