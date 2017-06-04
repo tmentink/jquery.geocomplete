@@ -10,8 +10,21 @@
   // Constants
   // ----------------------------------------------------------------------
 
-  const DATA_KEY    = "gmap.geocomplete"
-  const NAME        = "geocomplete"
+  const NAME      = "geocomplete"
+  const DATA_KEY  = `gmap.${NAME}`
+  const EVENT_KEY = `.${DATA_KEY}`
+
+  const Defaults = {
+    appendToParent: true,
+    fields: {},
+    geolocate: false,
+    types: ["geocode"]
+  }
+
+  const Event = {
+    FOCUS         : `focus${EVENT_KEY}`,
+    PLACE_CHANGED : "place_changed"
+  }
 
   const AddressFunctions = {
     city: function (details, short) {
@@ -97,13 +110,6 @@
     }
   }
 
-  const Defaults = {
-    appendToParent: true,
-    fields: {},
-    geolocate: false,
-    types: ["geocode"]
-  }
-
   const FieldFunctions = {
     clear: {
       INPUT: function($field) {
@@ -135,8 +141,8 @@
   // Global Variables
   // ----------------------------------------------------------------------
 
-  let Index = -1
-  let StyleSheet
+  let Index      = -1
+  let StyleSheet = _createStyleSheet()
 
 
   // ----------------------------------------------------------------------
@@ -151,13 +157,14 @@
       }
       config = $.extend(true, {}, $.fn[NAME].Defaults, config)
 
-      this.element  = element
-      this.fields   = _formatFieldIds(config.fields)
-      this.index    = Index += 1
-      this.obj      = new google.maps.places.Autocomplete(element, config)
+      this.element      = element
+      this.fields       = _formatFieldIds(config.fields)
+      this.index        = Index += 1
+      this.obj          = new google.maps.places.Autocomplete(element, config)
+      this.pacContainer = null
 
       // add event listenter to fill the fields when the place is changed
-      this.obj.addListener("place_changed", () => {
+      this.obj.addListener(Event.PLACE_CHANGED, () => {
         this.fillfields()
       })
 
@@ -166,24 +173,22 @@
         _geoLocate(this.obj)
       }
 
-      // append the .pac-container to element's parent
       if (config.appendToParent) {
-        StyleSheet = StyleSheet || _createStyleSheet()
+
+        // append the .pac-container to element's parent
+        $(element).on(Event.FOCUS, function() {
+          const $element = $(this)
+          const data     = $element.data(DATA_KEY)
+
+          if (data.pacContainer != null) {
+            _appendContainer($element, data.pacContainer)
+            $element.off(Event.FOCUS)
+          }
+        })
 
         // delay function to ensure pac-container exists in DOM
         setTimeout(() => {
-          const $element       = $(element)
-          const $pac_container = $(".pac-container")[this.index]
-          const left           = `${_calcLeftPosition($element)}px !important`
-          const top            = `${_calcTopPosition($element)}px !important`
-          $pac_container.id    = `pac-container_${element.id}`
-
-          StyleSheet.innerHTML += `#${$pac_container.id}{top:${top}; left:${left};}`
-
-          $element.parent()
-            .css({position: "relative"})
-            .append($pac_container)
-
+          this.pacContainer = $(".pac-container")[this.index]
         }, 1000)
       }
     }
@@ -281,6 +286,17 @@
   // ----------------------------------------------------------------------
   // Private Functions
   // ----------------------------------------------------------------------
+
+  function _appendContainer($element, $pacContainer) {
+    const left            = `${_calcLeftPosition($element)}px !important`
+    const top             = `${_calcTopPosition($element)}px !important`
+    $pacContainer.id      = `pac-container_${$element[0].id}`
+    StyleSheet.innerHTML += `#${$pacContainer.id}{top:${top}; left:${left};}`
+
+    $element.parent()
+      .css({position: "relative"})
+      .append($pacContainer)
+  }
 
   function _calcLeftPosition($element) {
     const element_left = $element.offset().left
