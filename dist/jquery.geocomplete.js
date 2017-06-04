@@ -1,5 +1,5 @@
 /*!
- * jquery.geocomplete v1.0.0 (https://github.com/tmentink/jquery.geocomplete)
+ * jquery.geocomplete v1.0.1 (https://github.com/tmentink/jquery.geocomplete)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -20,8 +20,19 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
 
 !function($) {
   "use strict";
-  var DATA_KEY = "gmap.geocomplete";
   var NAME = "geocomplete";
+  var DATA_KEY = "gmap." + NAME;
+  var EVENT_KEY = "." + DATA_KEY;
+  var Defaults = {
+    appendToParent: true,
+    fields: {},
+    geolocate: false,
+    types: [ "geocode" ]
+  };
+  var Event = {
+    FOCUS: "focus" + EVENT_KEY,
+    PLACE_CHANGED: "place_changed"
+  };
   var AddressFunctions = {
     city: function city(details, short) {
       return _getAddressValue({
@@ -103,12 +114,6 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
       });
     }
   };
-  var Defaults = {
-    appendToParent: true,
-    fields: {},
-    geolocate: false,
-    types: [ "geocode" ]
-  };
   var FieldFunctions = {
     clear: {
       INPUT: function INPUT($field) {
@@ -134,8 +139,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
       }
     }
   };
-  var Index = 0;
-  var StyleSheet = void 0;
+  var Index = -1;
+  var StyleSheet = _createStyleSheet();
   var Autocomplete = function() {
     function Autocomplete(element, config) {
       var _this = this;
@@ -146,26 +151,26 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
       config = $.extend(true, {}, $.fn[NAME].Defaults, config);
       this.element = element;
       this.fields = _formatFieldIds(config.fields);
+      this.index = Index += 1;
       this.obj = new google.maps.places.Autocomplete(element, config);
-      this.obj.addListener("place_changed", function() {
+      this.pacContainer = null;
+      this.obj.addListener(Event.PLACE_CHANGED, function() {
         _this.fillfields();
       });
       if (config.geolocate) {
         _geoLocate(this.obj);
       }
       if (config.appendToParent) {
-        StyleSheet = StyleSheet || _createStyleSheet();
+        $(element).on(Event.FOCUS, function() {
+          var $element = $(this);
+          var data = $element.data(DATA_KEY);
+          if (data.pacContainer != null) {
+            _appendContainer($element, data.pacContainer);
+            $element.off(Event.FOCUS);
+          }
+        });
         setTimeout(function() {
-          var $element = $(element);
-          var $pac_container = $(".pac-container")[Index];
-          var left = _calcLeftPosition($element) + "px !important";
-          var top = _calcTopPosition($element) + "px !important";
-          $pac_container.id = "pac-container_" + element.id;
-          StyleSheet.innerHTML += "#" + $pac_container.id + "{top:" + top + "; left:" + left + ";}";
-          $element.parent().css({
-            position: "relative"
-          }).append($pac_container);
-          Index += 1;
+          _this.pacContainer = $(".pac-container")[_this.index];
         }, 1e3);
       }
     }
@@ -231,6 +236,15 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
     };
     return Autocomplete;
   }();
+  function _appendContainer($element, $pacContainer) {
+    var left = _calcLeftPosition($element) + "px !important";
+    var top = _calcTopPosition($element) + "px !important";
+    $pacContainer.id = "pac-container_" + $element[0].id;
+    StyleSheet.innerHTML += "#" + $pacContainer.id + "{top:" + top + "; left:" + left + ";}";
+    $element.parent().css({
+      position: "relative"
+    }).append($pacContainer);
+  }
   function _calcLeftPosition($element) {
     var element_left = $element.offset().left;
     var parent_left = $element.parent().offset().left;

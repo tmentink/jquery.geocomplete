@@ -1,8 +1,12 @@
 /*!
- * jquery.geocomplete v1.0.0 (https://github.com/tmentink/jquery.geocomplete)
+ * jquery.geocomplete v1.0.1 (https://github.com/tmentink/jquery.geocomplete)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
+
+.pac-container {
+  z-index: 9999 !important;
+}
 
 .pac-icon {
   display: none !important;
