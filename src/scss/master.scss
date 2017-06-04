@@ -13,6 +13,10 @@ $bg-highlight   : rgba(0,0,0,.03) !default;
 //
 // Styles
 //
+.pac-container {
+  z-index: 9999 !important;
+}
+
 .pac-icon {
   display: none !important;
 }
