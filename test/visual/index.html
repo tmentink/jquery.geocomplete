@@ -13,93 +13,398 @@
         <link type="text/css" rel="Stylesheet" href="css/css-util.min.css" />
         <link type="text/css" rel="Stylesheet" href="../../dist/jquery.geocomplete.css" />
         <style type="text/css">
-          #padding {
+          #pageWrapper {
+            max-width: 800px !important;
+          }
+
+          .padding {
             height: 100vh;
           }
         </style>
     </head>
     <body>
 
-      <div id="modal" class="ui small modal">
-        <div class="header">
-          Search Location
-        </div>
-
-        <div class="content p-2">
+        <div id="pageWrapper" class="ui container p-2">
           
-          <div class="ui form">
-            <div class="field">
-              <label>Address:</label>
-              <div class="ui input">
-                <input id="txtAddress" type="text" placeholder="Start typing an address">
-              </div>
+          <h2 class="ui header text-center">jQuery Geocomplete</h2>
+          <p class="text-center">
+            A simple plugin for completing address forms. 
+            <br/>
+            <a class="ui small button mt-2" href="https://github.com/tmentink/jquery.geocomplete">
+              <i class="github icon"></i>
+              View Github
+            </a>
+          </p>
+
+          <br/>
+
+          <span data-modal="append" class="ui top attached fluid primary button">Appended To Parent</span>
+          <div class="ui bottom attached segment">
+            <pre class="m-0">
+              $(<span class="text-green text-darken-1">"#txtAddress1"</span>).geocomplete({
+                <b>appendToParent: true,</b>
+                fields: {
+                  ...
+                }
+              });
+            </pre>
+          </div>
+          
+          <span data-modal="no-append" class="ui top attached fluid primary button">Not Appended To Parent</span>
+          <div class="ui bottom attached segment">
+            <pre class="m-0">
+              $(<span class="text-green text-darken-1">"#txtAddress2"</span>).geocomplete({
+                <b>appendToParent: false,</b>
+                fields: {
+                  ...
+                }
+              });
+            </pre>
+          </div>
+          
+          <span data-modal="short" class="ui top attached fluid primary button">Short Values</span>
+          <div class="ui bottom attached segment">
+            <pre class="m-0">
+              $(<span class="text-green text-darken-1">"#txtAddress3"</span>).geocomplete({
+                fields: {
+                  txtAddress3 : <span class="text-green text-darken-1">"<b>short</b> street address"</span>,
+                  txtCity3    : <span class="text-green text-darken-1">"<b>short</b> city"</span>,
+                  txtCounty3  : <span class="text-green text-darken-1">"<b>short</b> county"</span>,
+                  txtState3   : <span class="text-green text-darken-1">"<b>short</b> state"</span>,
+                  ddlCountry3 : <span class="text-green text-darken-1">"<b>short</b> country"</span>,
+                  txtZipCode3 : <span class="text-green text-darken-1">"<b>short</b> zipcode"</span>
+                }
+              });
+            </pre>
+          </div>
+
+          <span data-modal="strict" class="ui top attached fluid primary button">Strict Bounds</span>
+          <div class="ui bottom attached segment">
+            <pre class="m-0">
+              $(<span class="text-green text-darken-1">"#txtAddress4"</span>).geocomplete({
+                <b>geolocate    : true,</b>
+                <b>strictBounds : true,</b>
+                fields: {
+                  ...
+                }
+              });
+            </pre>
+          </div>
+
+          <div data-modal="append" class="ui small modal">
+            <i class="close icon"></i>
+            <div class="header">
+              Appended To Parent
             </div>
 
-            <div class="two fields">
-              <div class="field">
-                <label>Country:</label>
-                <select id="ddlCountry" class="ui dropdown">
-                  <option value="">Country</option>
-                  <option value="1">United States</option>
-                  <option value="2">Mexico</option>
-                  <option value="3">Canada</option>
-                  <option value="4">Chile</option>
-                </select>
-              </div>
+            <div class="content p-2">
+              <div class="ui form">
+                <div class="field">
+                  <label>Address:</label>
+                  <div class="ui input">
+                    <input id="txtAddress1" type="text" placeholder="Start typing an address">
+                  </div>
+                </div>
 
-              <div class="field">
-                <label>State:</label>
-                <div class="ui input">
-                  <input id="txtState" type="text">
+                <div class="two fields">
+                  <div class="field">
+                    <label>Country:</label>
+                    <select id="ddlCountry1" class="ui dropdown">
+                      <option value="">Select Country</option>
+                      <option value="1">United States</option>
+                      <option value="2">Mexico</option>
+                      <option value="3">Canada</option>
+                      <option value="4">Chile</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label>State:</label>
+                    <div class="ui input">
+                      <input id="txtState1" type="text">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="three fields">
+                  <div class="field">
+                    <label>County:</label>
+                    <div class="ui input">
+                      <input id="txtCounty1" type="text">
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label>City:</label>
+                    <div class="ui input">
+                      <input id="txtCity1" type="text">
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label>Zip Code:</label>
+                    <div class="ui input">
+                      <input id="txtZipCode1" type="text">
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="three fields">
-              <div class="field">
-                <label>County:</label>
-                <div class="ui input">
-                  <input id="txtCounty" type="text">
-                </div>
-              </div>
-
-              <div class="field">
-                <label>City:</label>
-                <div class="ui input">
-                  <input id="txtCity" type="text">
-                </div>
-              </div>
-
-              <div class="field">
-                <label>Zip Code:</label>
-                <div class="ui input">
-                  <input id="txtZipCode" type="text">
-                </div>
-              </div>
+              <div class="padding"></div>
             </div>
           </div>
 
-          <div id="padding"></div>
+          <div data-modal="no-append" class="ui small modal">
+            <i class="close icon"></i>
+            <div class="header">
+              Not Appended to Parent
+            </div>
+
+            <div class="content p-2"> 
+              <div class="ui form">
+                <div class="field">
+                  <label>Address:</label>
+                  <div class="ui input">
+                    <input id="txtAddress2" type="text" placeholder="Start typing an address">
+                  </div>
+                </div>
+
+                <div class="two fields">
+                  <div class="field">
+                    <label>Country:</label>
+                    <select id="ddlCountry2" class="ui dropdown">
+                      <option value="">Select Country</option>
+                      <option value="1">United States</option>
+                      <option value="2">Mexico</option>
+                      <option value="3">Canada</option>
+                      <option value="4">Chile</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label>State:</label>
+                    <div class="ui input">
+                      <input id="txtState2" type="text">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="three fields">
+                  <div class="field">
+                    <label>County:</label>
+                    <div class="ui input">
+                      <input id="txtCounty2" type="text">
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label>City:</label>
+                    <div class="ui input">
+                      <input id="txtCity2" type="text">
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label>Zip Code:</label>
+                    <div class="ui input">
+                      <input id="txtZipCode2" type="text">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="padding"></div>
+            </div>
+          </div>
+
+          <div data-modal="short" class="ui small modal">
+            <i class="close icon"></i>
+            <div class="header">
+              Short Values
+            </div>
+
+            <div class="content p-2">
+              <div class="ui form">
+                <div class="field">
+                  <label>Address:</label>
+                  <div class="ui input">
+                    <input id="txtAddress3" type="text" placeholder="Start typing an address">
+                  </div>
+                </div>
+
+                <div class="two fields">
+                  <div class="field">
+                    <label>Country:</label>
+                    <select id="ddlCountry3" class="ui dropdown">
+                      <option value="">Select Country</option>
+                      <option value="1">US</option>
+                      <option value="2">MX</option>
+                      <option value="3">CA</option>
+                      <option value="4">CL</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label>State:</label>
+                    <div class="ui input">
+                      <input id="txtState3" type="text">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="three fields">
+                  <div class="field">
+                    <label>County:</label>
+                    <div class="ui input">
+                      <input id="txtCounty3" type="text">
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label>City:</label>
+                    <div class="ui input">
+                      <input id="txtCity3" type="text">
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label>Zip Code:</label>
+                    <div class="ui input">
+                      <input id="txtZipCode3" type="text">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="padding"></div>
+            </div>
+          </div>
+
+          <div data-modal="strict" class="ui small modal">
+            <i class="close icon"></i>
+            <div class="header">
+              Strict Bounds
+            </div>
+
+            <div class="content p-2">
+              <div class="ui form">
+                <div class="field">
+                  <label>Address:</label>
+                  <div class="ui input">
+                    <input id="txtAddress4" type="text" placeholder="Start typing an address">
+                  </div>
+                </div>
+
+                <div class="two fields">
+                  <div class="field">
+                    <label>Country:</label>
+                    <select id="ddlCountry4" class="ui dropdown">
+                      <option value="">Select Country</option>
+                      <option value="1">United States</option>
+                      <option value="2">Mexico</option>
+                      <option value="3">Canada</option>
+                      <option value="4">Chile</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label>State:</label>
+                    <div class="ui input">
+                      <input id="txtState4" type="text">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="three fields">
+                  <div class="field">
+                    <label>County:</label>
+                    <div class="ui input">
+                      <input id="txtCounty4" type="text">
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label>City:</label>
+                    <div class="ui input">
+                      <input id="txtCity4" type="text">
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label>Zip Code:</label>
+                    <div class="ui input">
+                      <input id="txtZipCode4" type="text">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="padding"></div>
+            </div>
+          </div>
+
         </div>
-      </div>
 
-
+      
         <!-- SCRIPTS
         ===========================================-->
         <script src="js/jquery.min.js"></script>
         <script src="js/semantic-ui.min.js"></script>
         <script src="../../dist/jquery.geocomplete.js"></script>
         <script type="text/javascript">
-          $("#modal").modal("show");
-          $("#txtAddress").geocomplete({
-            fields: {
-              txtAddress: "street address",
-              txtCity: "city",
-              txtCounty: "county",
-              txtState: "short state",
-              ddlCountry: "country",
-              txtZipCode: "zipcode"
-            }
+          $(document).ready(function(){
+            $(".ui.dropdown").dropdown();
+
+            $(document).on("click", ".button", function() {
+              var modal = $(this).attr("data-modal");
+              $(".modal[data-modal='" + modal + "']").modal("show");
+            });
+
+            $("#txtAddress1").geocomplete({
+              appendToParent: true,
+              fields: {
+                txtAddress1 : "street address",
+                txtCity1    : "city",
+                txtCounty1  : "county",
+                txtState1   : "state",
+                ddlCountry1 : "country",
+                txtZipCode1 : "zipcode"
+              }
+            });
+            $("#txtAddress2").geocomplete({
+              appendToParent: false,
+              fields: {
+                txtAddress2 : "street address",
+                txtCity2    : "city",
+                txtCounty2  : "county",
+                txtState2   : "state",
+                ddlCountry2 : "country",
+                txtZipCode2 : "zipcode"
+              }
+            });
+            $("#txtAddress3").geocomplete({
+              appendToParent: true,
+              fields: {
+                txtAddress3 : "short street address",
+                txtCity3    : "short city",
+                txtCounty3  : "short county",
+                txtState3   : "short state",
+                ddlCountry3 : "short country",
+                txtZipCode3 : "short zipcode"
+              }
+            });
+            $("#txtAddress4").geocomplete({
+              geolocate    : true,
+              strictBounds : true,
+              fields: {
+                txtAddress4 : "street address",
+                txtCity4    : "city",
+                txtCounty4  : "county",
+                txtState4   : "state",
+                ddlCountry4 : "country",
+                txtZipCode4 : "zipcode"
+              }
+            });
           });
         </script>
     </body>
