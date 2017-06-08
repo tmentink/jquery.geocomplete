@@ -14,11 +14,11 @@
   const DATA_KEY  = `gmap.${NAME}`
   const EVENT_KEY = `.${DATA_KEY}`
 
-  const Defaults = {
-    appendToParent: true,
-    fields: {},
-    geolocate: false,
-    types: ["geocode"]
+  const Settings = {
+    appendToParent : true,
+    fields         : {},
+    geolocate      : false,
+    types          : ["geocode"]
   }
 
   const Event = {
@@ -149,13 +149,13 @@
   // Class Definition
   // ----------------------------------------------------------------------
 
-  class Autocomplete {
+  class Geocomplete {
 
     constructor(element, config) {
       if (typeof config === "string") {
         config = {}
       }
-      config = $.extend(true, {}, $.fn[NAME].Defaults, config)
+      config = $.extend(true, {}, $.fn[NAME].settings, config)
 
       this.element      = element
       this.fields       = _formatFieldIds(config.fields)
@@ -178,10 +178,10 @@
         // append the .pac-container to element's parent
         $(element).on(Event.FOCUS, function() {
           const $element = $(this)
-          const data     = $element.data(DATA_KEY)
+          const geo      = $element.data(DATA_KEY)
 
-          if (data.pacContainer != null) {
-            _appendContainer($element, data.pacContainer)
+          if (geo.pacContainer != null) {
+            _appendContainer($element, geo.pacContainer)
             $element.off(Event.FOCUS)
           }
         })
@@ -212,7 +212,7 @@
       this.clearfields()
 
       const fields       = this.fields
-      const placeDetails = _getPlaceDetails(this.obj)
+      const placeDetails = this.obj.getPlace()
 
       for (let id in fields) {
         let addressType   = fields[id].toLowerCase().replace(/\s+/g, "")
@@ -261,20 +261,20 @@
 
     static _jQueryInterface(config, parms) {
       const $element = $(this)
-      let data       = $element.data(DATA_KEY)
+      let geo        = $element.data(DATA_KEY)
 
-      if (!data) {
-        data = new Autocomplete(this[0], config)
-        $element.data(DATA_KEY, data)
+      if (!geo) {
+        geo = new Geocomplete(this[0], config)
+        $element.data(DATA_KEY, geo)
       }
 
       if (typeof config === "string") {
-        config = config.toLowerCase().replace(/\s+/g, "")
+        let method = config.toLowerCase().replace(/\s+/g, "")
 
-        if (data[config] === undefined) {
+        if (geo[method] === undefined) {
           throw new Error(`No method named "${config}"`)
         }
-        return data[config](parms)
+        return geo[method](parms)
       }
 
       return this
@@ -359,10 +359,6 @@
     return _isSemanticDropdown($field) ? "SEMANTIC_DROPDOWN" : $field.prop("nodeName")
   }
 
-  function _getPlaceDetails(obj) {
-    return obj.getPlace()
-  }
-
   function _isSemanticDropdown($field) {
     const $parent = $field.parent()
 
@@ -378,9 +374,9 @@
   // jQuery
   // ------------------------------------------------------------------------
 
-  $.fn[NAME]             = Autocomplete._jQueryInterface
-  $.fn[NAME].Constructor = Autocomplete
-  $.fn[NAME].Defaults    = Defaults
+  $.fn[NAME]             = Geocomplete._jQueryInterface
+  $.fn[NAME].Constructor = Geocomplete
+  $.fn[NAME].settings    = Settings
 
 
   return $
