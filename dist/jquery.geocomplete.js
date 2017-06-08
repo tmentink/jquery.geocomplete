@@ -1,5 +1,5 @@
 /*!
- * jquery.geocomplete v1.0.1 (https://github.com/tmentink/jquery.geocomplete)
+ * jquery.geocomplete v1.1.0 (https://github.com/tmentink/jquery.geocomplete)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -23,11 +23,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
   var NAME = "geocomplete";
   var DATA_KEY = "gmap." + NAME;
   var EVENT_KEY = "." + DATA_KEY;
-  var Defaults = {
+  var Settings = {
     appendToParent: true,
-    fields: {},
+    fields: null,
     geolocate: false,
-    types: [ "geocode" ]
+    types: [ "geocode" ],
+    onChange: function onChange() {},
+    onNoResult: function onNoResult() {}
   };
   var Event = {
     FOCUS: "focus" + EVENT_KEY,
@@ -141,31 +143,40 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
   };
   var Index = -1;
   var StyleSheet = _createStyleSheet();
-  var Autocomplete = function() {
-    function Autocomplete(element, config) {
+  var Geocomplete = function() {
+    function Geocomplete(element, settings) {
       var _this = this;
-      _classCallCheck(this, Autocomplete);
-      if (typeof config === "string") {
-        config = {};
+      _classCallCheck(this, Geocomplete);
+      if (typeof settings === "string") {
+        settings = {};
       }
-      config = $.extend(true, {}, $.fn[NAME].Defaults, config);
+      settings = $.extend(true, {}, $.fn[NAME].settings, settings);
       this.element = element;
-      this.fields = _formatFieldIds(config.fields);
+      this.fields = settings.fields;
       this.index = Index += 1;
-      this.obj = new google.maps.places.Autocomplete(element, config);
+      this.obj = new google.maps.places.Autocomplete(element, settings);
       this.pacContainer = null;
       this.obj.addListener(Event.PLACE_CHANGED, function() {
-        _this.fillfields();
+        var $element = $(_this.element);
+        var placeDetails = _this.getplace();
+        if (_isEmptyResult(placeDetails)) {
+          settings.onNoResult.call($element, placeDetails.name);
+        } else {
+          settings.onChange.call($element, placeDetails.name, placeDetails);
+          if (_this.fields != null) {
+            _this.fillfields();
+          }
+        }
       });
-      if (config.geolocate) {
+      if (settings.geolocate) {
         _geoLocate(this.obj);
       }
-      if (config.appendToParent) {
+      if (settings.appendToParent) {
         $(element).on(Event.FOCUS, function() {
           var $element = $(this);
-          var data = $element.data(DATA_KEY);
-          if (data.pacContainer != null) {
-            _appendContainer($element, data.pacContainer);
+          var geo = $element.data(DATA_KEY);
+          if (geo.pacContainer != null) {
+            _appendContainer($element, geo.pacContainer);
             $element.off(Event.FOCUS);
           }
         });
@@ -174,67 +185,80 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
         }, 1e3);
       }
     }
-    Autocomplete.prototype.clearfields = function clearfields() {
+    Geocomplete.prototype.clearfields = function clearfields() {
       var fields = this.fields;
-      for (var id in fields) {
-        var $field = $(id);
-        FieldFunctions.clear[_getFieldType($field)]($field);
+      if ($.type(fields) == "string") {
+        $("[data-" + NAME + "]", $(this.fields)).each(function() {
+          var $field = $(this);
+          FieldFunctions.clear[_getFieldType($field)]($field);
+        });
+      } else if ($.type(fields) == "object") {
+        for (var id in fields) {
+          var $field = $(id);
+          FieldFunctions.clear[_getFieldType($field)]($field);
+        }
       }
       return $(this.element);
     };
-    Autocomplete.prototype.fillfields = function fillfields() {
+    Geocomplete.prototype.fillfields = function fillfields() {
       this.clearfields();
       var fields = this.fields;
-      var placeDetails = _getPlaceDetails(this.obj);
-      for (var id in fields) {
-        var addressType = fields[id].toLowerCase().replace(/\s+/g, "");
-        var short = addressType.indexOf("short") != -1;
-        addressType = addressType.replace("short", "");
-        var value = AddressFunctions[addressType](placeDetails, short);
-        var $field = $(id);
-        FieldFunctions.set[_getFieldType($field)]($field, value);
+      var placeDetails = this.obj.getPlace();
+      if ($.type(fields) == "string") {
+        $("[data-" + NAME + "]", $(this.fields)).each(function() {
+          var $field = $(this);
+          var addressType = $field.data(NAME);
+          _setFieldValue($field, addressType, placeDetails);
+        });
+      } else if ($.type(fields) == "object") {
+        for (var id in fields) {
+          var $field = $(id);
+          var addressType = fields[id];
+          _setFieldValue($field, addressType, placeDetails);
+        }
       }
       return $(this.element);
     };
-    Autocomplete.prototype.getbounds = function getbounds() {
+    Geocomplete.prototype.getbounds = function getbounds() {
       return this.obj.getBounds();
     };
-    Autocomplete.prototype.getplace = function getplace() {
+    Geocomplete.prototype.getplace = function getplace() {
       return this.obj.getPlace();
     };
-    Autocomplete.prototype.setbounds = function setbounds(parms) {
+    Geocomplete.prototype.setbounds = function setbounds(parms) {
       this.obj.setBounds(parms);
       return $(this.element);
     };
-    Autocomplete.prototype.setcomponentrestrictions = function setcomponentrestrictions(parms) {
+    Geocomplete.prototype.setcomponentrestrictions = function setcomponentrestrictions(parms) {
       this.obj.setComponentRestrictions(parms);
       return $(this.element);
     };
-    Autocomplete.prototype.setoptions = function setoptions(parms) {
+    Geocomplete.prototype.setoptions = function setoptions(parms) {
       this.obj.setOptions(parms);
       return $(this.element);
     };
-    Autocomplete.prototype.settypes = function settypes(parms) {
+    Geocomplete.prototype.settypes = function settypes(parms) {
       this.obj.setTypes(parms);
       return $(this.element);
     };
-    Autocomplete._jQueryInterface = function _jQueryInterface(config, parms) {
+    Geocomplete._jQueryInterface = function _jQueryInterface(settings, parms) {
       var $element = $(this);
-      var data = $element.data(DATA_KEY);
-      if (!data) {
-        data = new Autocomplete(this[0], config);
-        $element.data(DATA_KEY, data);
+      var geo = $element.data(DATA_KEY);
+      if (!geo) {
+        geo = new Geocomplete(this[0], settings);
+        $element.data(DATA_KEY, geo);
       }
-      if (typeof config === "string") {
-        config = config.toLowerCase().replace(/\s+/g, "");
-        if (data[config] === undefined) {
-          throw new Error('No method named "' + config + '"');
+      if (typeof settings === "string") {
+        var method = settings.toLowerCase().replace(/\s+/g, "");
+        if (geo[method]) {
+          return geo[method](parms);
+        } else {
+          _throwError('"' + settings + '" is not a valid method');
         }
-        return data[config](parms);
       }
       return this;
     };
-    return Autocomplete;
+    return Geocomplete;
   }();
   function _appendContainer($element, $pacContainer) {
     var left = _calcLeftPosition($element) + "px !important";
@@ -262,15 +286,6 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
     $("head")[0].appendChild(style);
     return style;
   }
-  function _formatFieldIds(fields) {
-    for (var id in fields) {
-      if (id.substring(0, 1) != "#") {
-        fields["#" + id] = fields[id];
-        delete fields[id];
-      }
-    }
-    return fields;
-  }
   function _geoLocate(obj) {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(position) {
@@ -297,8 +312,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
   function _getFieldType($field) {
     return _isSemanticDropdown($field) ? "SEMANTIC_DROPDOWN" : $field.prop("nodeName");
   }
-  function _getPlaceDetails(obj) {
-    return obj.getPlace();
+  function _isEmptyResult(placeDetails) {
+    return Object.keys(placeDetails).length <= 1;
   }
   function _isSemanticDropdown($field) {
     var $parent = $field.parent();
@@ -307,8 +322,22 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
     }
     return false;
   }
-  $.fn[NAME] = Autocomplete._jQueryInterface;
-  $.fn[NAME].Constructor = Autocomplete;
-  $.fn[NAME].Defaults = Defaults;
+  function _setFieldValue($field, addressType, placeDetails) {
+    addressType = addressType.toLowerCase().replace(/\s+/g, "");
+    var short = addressType.indexOf("short") != -1;
+    addressType = addressType.replace("short", "");
+    if (AddressFunctions[addressType]) {
+      var value = AddressFunctions[addressType](placeDetails, short);
+      FieldFunctions.set[_getFieldType($field)]($field, value);
+    } else {
+      _throwError(addressType + " is not a valid address type");
+    }
+  }
+  function _throwError(message) {
+    console.error(message);
+  }
+  $.fn[NAME] = Geocomplete._jQueryInterface;
+  $.fn[NAME].Constructor = Geocomplete;
+  $.fn[NAME].settings = Settings;
   return $;
 }(window.jQuery || window.$);
