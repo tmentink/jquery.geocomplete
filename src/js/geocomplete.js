@@ -16,9 +16,13 @@
 
   const Settings = {
     appendToParent : true,
-    fields         : {},
+    fields         : null,
     geolocate      : false,
-    types          : ["geocode"]
+    types          : ["geocode"],
+
+    // Callbacks
+    onChange       : function() {},
+    onNoResult     : function() {}
   }
 
   const Event = {
@@ -151,29 +155,41 @@
 
   class Geocomplete {
 
-    constructor(element, config) {
-      if (typeof config === "string") {
-        config = {}
+    constructor(element, settings) {
+      if (typeof settings === "string") {
+        settings = {}
       }
-      config = $.extend(true, {}, $.fn[NAME].settings, config)
+      settings = $.extend(true, {}, $.fn[NAME].settings, settings)
 
       this.element      = element
-      this.fields       = _formatFieldIds(config.fields)
+      this.fields       = settings.fields
       this.index        = Index += 1
-      this.obj          = new google.maps.places.Autocomplete(element, config)
+      this.obj          = new google.maps.places.Autocomplete(element, settings)
       this.pacContainer = null
 
-      // add event listenter to fill the fields when the place is changed
+      // add event listenter when the place is changed
       this.obj.addListener(Event.PLACE_CHANGED, () => {
-        this.fillfields()
+        const $element     = $(this.element)
+        const placeDetails = this.getplace()
+
+        if (_isEmptyResult(placeDetails)) {
+          settings.onNoResult.call($element, placeDetails.name)
+        }
+        else {
+          settings.onChange.call($element, placeDetails.name, placeDetails)
+
+          if (this.fields != null) {
+            this.fillfields()
+          }
+        }
       })
 
       // bias the search results based on the browser's geolocation
-      if (config.geolocate) {
+      if (settings.geolocate) {
         _geoLocate(this.obj)
       }
 
-      if (config.appendToParent) {
+      if (settings.appendToParent) {
 
         // append the .pac-container to element's parent
         $(element).on(Event.FOCUS, function() {
@@ -200,9 +216,18 @@
 
     clearfields() {
       const fields  = this.fields
-      for (let id in fields) {
-        const $field = $(id)
-        FieldFunctions.clear[_getFieldType($field)]($field)
+
+      if ($.type(fields) == "string") {
+        $(`[data-${NAME}]`, $(this.fields)).each(function() {
+          const $field = $(this)
+          FieldFunctions.clear[_getFieldType($field)]($field)
+        })
+      }
+      else if ($.type(fields) == "object") {
+        for (let id in fields) {
+          const $field = $(id)
+          FieldFunctions.clear[_getFieldType($field)]($field)
+        }
       }
 
       return $(this.element)
@@ -214,13 +239,19 @@
       const fields       = this.fields
       const placeDetails = this.obj.getPlace()
 
-      for (let id in fields) {
-        let addressType   = fields[id].toLowerCase().replace(/\s+/g, "")
-        const short       = addressType.indexOf("short") != -1
-        addressType       = addressType.replace("short", "")
-        const value       = AddressFunctions[addressType](placeDetails, short)
-        const $field      = $(id)
-        FieldFunctions.set[_getFieldType($field)]($field, value)
+      if ($.type(fields) == "string") {
+        $(`[data-${NAME}]`, $(this.fields)).each(function() {
+          const $field      = $(this)
+          const addressType = $field.data(NAME)
+          _setFieldValue($field, addressType, placeDetails)
+        })
+      }
+      else if ($.type(fields) == "object") {
+        for (let id in fields) {
+          const $field      = $(id)
+          const addressType = fields[id]
+          _setFieldValue($field, addressType, placeDetails)
+        }
       }
 
       return $(this.element)
@@ -259,22 +290,24 @@
     // Static Methods
     // --------------------------------------------------------------------
 
-    static _jQueryInterface(config, parms) {
+    static _jQueryInterface(settings, parms) {
       const $element = $(this)
       let geo        = $element.data(DATA_KEY)
 
       if (!geo) {
-        geo = new Geocomplete(this[0], config)
+        geo = new Geocomplete(this[0], settings)
         $element.data(DATA_KEY, geo)
       }
 
-      if (typeof config === "string") {
-        let method = config.toLowerCase().replace(/\s+/g, "")
+      if (typeof settings === "string") {
+        let method = settings.toLowerCase().replace(/\s+/g, "")
 
-        if (geo[method] === undefined) {
-          throw new Error(`No method named "${config}"`)
+        if (geo[method]) {
+          return geo[method](parms)
         }
-        return geo[method](parms)
+        else {
+          _throwError(`"${settings}" is not a valid method`)
+        }
       }
 
       return this
@@ -320,16 +353,6 @@
     return style
   }
 
-  function _formatFieldIds(fields) {
-    for (var id in fields) {
-      if (id.substring(0, 1) != "#") {
-        fields["#" + id] = fields[id]
-        delete fields[id]
-      }
-    }
-    return fields
-  }
-
   function _geoLocate(obj) {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function (position) {
@@ -359,6 +382,10 @@
     return _isSemanticDropdown($field) ? "SEMANTIC_DROPDOWN" : $field.prop("nodeName")
   }
 
+  function _isEmptyResult(placeDetails) {
+    return Object.keys(placeDetails).length <= 1
+  }
+
   function _isSemanticDropdown($field) {
     const $parent = $field.parent()
 
@@ -367,6 +394,25 @@
       return true
     }
     return false
+  }
+
+  function _setFieldValue($field, addressType, placeDetails) {
+    addressType       = addressType.toLowerCase().replace(/\s+/g, "")
+    const short       = addressType.indexOf("short") != -1
+    addressType       = addressType.replace("short", "")
+
+    if (AddressFunctions[addressType]) {
+      const value = AddressFunctions[addressType](placeDetails, short)
+      FieldFunctions.set[_getFieldType($field)]($field, value)
+    }
+    else {
+      _throwError(`${addressType} is not a valid address type`)
+    }
+  }
+
+  function _throwError(message) {
+    /* eslint-disable no-console */
+    console.error(message)
   }
 
 
