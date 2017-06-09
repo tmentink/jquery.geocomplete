@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>Geocomplete Visual Test</title>
+        <title>jQuery Geocomplete</title>
         <meta name="description" content="">
         <meta name="author" content="Trent Mentink">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -24,11 +24,14 @@
     </head>
     <body>
 
-        <div id="pageWrapper" class="ui container p-2">
+        <div id="pageWrapper" class="ui container py-2 px-0">
           
+
+          <!-- Header
+          ===========================================-->
           <h2 class="ui header text-center">jQuery Geocomplete</h2>
           <p class="text-center">
-            A simple plugin for completing address forms. 
+            A simple plugin for Google Maps Autocomplete. 
             <br/>
             <a class="ui small button mt-2" href="https://github.com/tmentink/jquery.geocomplete">
               <i class="github icon"></i>
@@ -36,80 +39,45 @@
             </a>
           </p>
 
-          <br/>
+          <h4 class="text-center mt-8 mb-2">Click the blue buttons to view the example</h4>
 
-          <span data-modal="append" class="ui top attached fluid primary button">Appended To Parent</span>
+
+          <!-- Fields with Data Attributes 
+          ===========================================-->
+          <span data-modal="data" class="ui top attached fluid primary button">Fields with Data Attributes</span>
           <div class="ui bottom attached segment">
             <pre class="m-0">
               $(<span class="text-green text-darken-1">"#txtAddress1"</span>).geocomplete({
-                <b>appendToParent: true,</b>
-                fields: {
-                  ...
-                }
+                fields: <span class="text-green text-darken-1">"#myForm"</span>
               });
-            </pre>
-          </div>
-          
-          <span data-modal="no-append" class="ui top attached fluid primary button">Not Appended To Parent</span>
-          <div class="ui bottom attached segment">
-            <pre class="m-0">
-              $(<span class="text-green text-darken-1">"#txtAddress2"</span>).geocomplete({
-                <b>appendToParent: false,</b>
-                fields: {
-                  ...
-                }
-              });
-            </pre>
-          </div>
-          
-          <span data-modal="short" class="ui top attached fluid primary button">Short Values</span>
-          <div class="ui bottom attached segment">
-            <pre class="m-0">
-              $(<span class="text-green text-darken-1">"#txtAddress3"</span>).geocomplete({
-                fields: {
-                  txtAddress3 : <span class="text-green text-darken-1">"<b>short</b> street address"</span>,
-                  txtCity3    : <span class="text-green text-darken-1">"<b>short</b> city"</span>,
-                  txtCounty3  : <span class="text-green text-darken-1">"<b>short</b> county"</span>,
-                  txtState3   : <span class="text-green text-darken-1">"<b>short</b> state"</span>,
-                  ddlCountry3 : <span class="text-green text-darken-1">"<b>short</b> country"</span>,
-                  txtZipCode3 : <span class="text-green text-darken-1">"<b>short</b> zipcode"</span>
-                }
-              });
+
+              &lt;div id=<span class="text-green text-darken-1">"myForm"</span>&gt;
+                &lt;input id=<span class="text-green text-darken-1">"txtAddress1"</span> <b>data-geocomplete=<span class="text-green text-darken-1">"street address"</span></b> /&gt;
+                &lt;select <b>data-geocomplete=<span class="text-green text-darken-1">"country"</span></b>&gt;&lt;/select&gt;
+                ...
+              &lt;/div&gt;
             </pre>
           </div>
 
-          <span data-modal="strict" class="ui top attached fluid primary button">Strict Bounds</span>
-          <div class="ui bottom attached segment">
-            <pre class="m-0">
-              $(<span class="text-green text-darken-1">"#txtAddress4"</span>).geocomplete({
-                <b>geolocate    : true,</b>
-                <b>strictBounds : true,</b>
-                fields: {
-                  ...
-                }
-              });
-            </pre>
-          </div>
-
-          <div data-modal="append" class="ui small modal">
+          <div data-modal="data" class="ui small modal">
             <i class="close icon"></i>
             <div class="header">
-              Appended To Parent
+              Fields with Data Attributes
             </div>
 
             <div class="content p-2">
-              <div class="ui form">
+              <div id="myForm" class="ui form">
                 <div class="field">
-                  <label>Address:</label>
+                  <label>Street Address:</label>
                   <div class="ui input">
-                    <input id="txtAddress1" type="text" placeholder="Start typing an address">
+                    <input id="txtAddress1" type="text" placeholder="Start typing a street address" data-geocomplete="street address">
                   </div>
                 </div>
 
                 <div class="two fields">
                   <div class="field">
                     <label>Country:</label>
-                    <select id="ddlCountry1" class="ui dropdown">
+                    <select class="ui dropdown" data-geocomplete="country">
                       <option value="">Select Country</option>
                       <option value="1">United States</option>
                       <option value="2">Mexico</option>
@@ -121,7 +89,7 @@
                   <div class="field">
                     <label>State:</label>
                     <div class="ui input">
-                      <input id="txtState1" type="text">
+                      <input type="text" data-geocomplete="state">
                     </div>
                   </div>
                 </div>
@@ -130,42 +98,59 @@
                   <div class="field">
                     <label>County:</label>
                     <div class="ui input">
-                      <input id="txtCounty1" type="text">
+                      <input type="text" data-geocomplete="county">
                     </div>
                   </div>
 
                   <div class="field">
                     <label>City:</label>
                     <div class="ui input">
-                      <input id="txtCity1" type="text">
+                      <input type="text" data-geocomplete="city">
                     </div>
                   </div>
 
                   <div class="field">
                     <label>Zip Code:</label>
                     <div class="ui input">
-                      <input id="txtZipCode1" type="text">
+                      <input type="text" data-geocomplete="zip code">
                     </div>
                   </div>
                 </div>
               </div>
-
-              <div class="padding"></div>
             </div>
           </div>
 
-          <div data-modal="no-append" class="ui small modal">
+
+          <!-- Short Values
+          ===========================================-->
+          <span data-modal="short" class="ui top attached fluid primary button">Short Values and Field Object</span>
+          <div class="ui bottom attached segment">
+            <pre class="m-0">
+              $(<span class="text-green text-darken-1">"#txtAddress2"</span>).geocomplete({
+                fields: {
+                  <span class="text-green text-darken-1">"#txtAddress2"</span> : <span class="text-green text-darken-1">"<b>short</b> street address"</span>,
+                  <span class="text-green text-darken-1">"#ddlCountry2"</span> : <span class="text-green text-darken-1">"<b>short</b> country"</span>,
+                  <span class="text-green text-darken-1">"#txtState2"</span>   : <span class="text-green text-darken-1">"<b>short</b> state"</span>,
+                  <span class="text-green text-darken-1">".txtCounty2"</span>  : <span class="text-green text-darken-1">"<b>short</b> county"</span>,
+                  <span class="text-green text-darken-1">".txtCity2"</span>    : <span class="text-green text-darken-1">"<b>short</b> city"</span>,
+                  <span class="text-green text-darken-1">".txtZipCode2"</span> : <span class="text-green text-darken-1">"<b>short</b> zipcode"</span>
+                }
+              });
+            </pre>
+          </div>
+
+          <div data-modal="short" class="ui small modal">
             <i class="close icon"></i>
             <div class="header">
-              Not Appended to Parent
+              Short Values
             </div>
 
-            <div class="content p-2"> 
+            <div class="content p-2">
               <div class="ui form">
                 <div class="field">
-                  <label>Address:</label>
+                  <label>Street Address:</label>
                   <div class="ui input">
-                    <input id="txtAddress2" type="text" placeholder="Start typing an address">
+                    <input id="txtAddress2" type="text" placeholder="Start typing a street address">
                   </div>
                 </div>
 
@@ -174,10 +159,10 @@
                     <label>Country:</label>
                     <select id="ddlCountry2" class="ui dropdown">
                       <option value="">Select Country</option>
-                      <option value="1">United States</option>
-                      <option value="2">Mexico</option>
-                      <option value="3">Canada</option>
-                      <option value="4">Chile</option>
+                      <option value="1">US</option>
+                      <option value="2">MX</option>
+                      <option value="3">CA</option>
+                      <option value="4">CL</option>
                     </select>
                   </div>
 
@@ -193,22 +178,84 @@
                   <div class="field">
                     <label>County:</label>
                     <div class="ui input">
-                      <input id="txtCounty2" type="text">
+                      <input class="txtCounty2" type="text">
                     </div>
                   </div>
 
                   <div class="field">
                     <label>City:</label>
                     <div class="ui input">
-                      <input id="txtCity2" type="text">
+                      <input class="txtCity2" type="text">
                     </div>
                   </div>
 
                   <div class="field">
                     <label>Zip Code:</label>
                     <div class="ui input">
-                      <input id="txtZipCode2" type="text">
+                      <input class="txtZipCode2" type="text">
                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- Appended to Parent
+          ===========================================-->
+          <span data-modal="append" class="ui top attached fluid primary button">Appended To Parent</span>
+          <div class="ui bottom attached segment">
+            <pre class="m-0">
+              $(<span class="text-green text-darken-1">"#txtAddress3"</span>).geocomplete({
+                <b>appendToParent: true</b>
+              });
+            </pre>
+          </div>
+
+          <div data-modal="append" class="ui small modal">
+            <i class="close icon"></i>
+            <div class="header">
+              Appended to Parent
+            </div>
+
+            <div class="content p-2">
+              <div class="ui form">
+                <div class="field">
+                  <label>Street Address:</label>
+                  <div class="ui input">
+                    <input id="txtAddress3" type="text" placeholder="Start typing a street address">
+                  </div>
+                </div>
+              </div>
+
+              <div class="padding"></div>
+            </div>
+          </div>
+          
+
+          <!-- Not Appended to Parent
+          ===========================================-->
+          <span data-modal="no-append" class="ui top attached fluid primary button">Not Appended To Parent</span>
+          <div class="ui bottom attached segment">
+            <pre class="m-0">
+              $(<span class="text-green text-darken-1">"#txtAddress4"</span>).geocomplete({
+                <b>appendToParent: false</b>
+              });
+            </pre>
+          </div>
+          
+          <div data-modal="no-append" class="ui small modal">
+            <i class="close icon"></i>
+            <div class="header">
+              Not Appended to Parent
+            </div>
+
+            <div class="content p-2">
+              <div class="ui form">
+                <div class="field">
+                  <label>Street Address:</label>
+                  <div class="ui input">
+                    <input id="txtAddress4" type="text" placeholder="Start typing a street address">
                   </div>
                 </div>
               </div>
@@ -217,67 +264,17 @@
             </div>
           </div>
 
-          <div data-modal="short" class="ui small modal">
-            <i class="close icon"></i>
-            <div class="header">
-              Short Values
-            </div>
-
-            <div class="content p-2">
-              <div class="ui form">
-                <div class="field">
-                  <label>Address:</label>
-                  <div class="ui input">
-                    <input id="txtAddress3" type="text" placeholder="Start typing an address">
-                  </div>
-                </div>
-
-                <div class="two fields">
-                  <div class="field">
-                    <label>Country:</label>
-                    <select id="ddlCountry3" class="ui dropdown">
-                      <option value="">Select Country</option>
-                      <option value="1">US</option>
-                      <option value="2">MX</option>
-                      <option value="3">CA</option>
-                      <option value="4">CL</option>
-                    </select>
-                  </div>
-
-                  <div class="field">
-                    <label>State:</label>
-                    <div class="ui input">
-                      <input id="txtState3" type="text">
-                    </div>
-                  </div>
-                </div>
-
-                <div class="three fields">
-                  <div class="field">
-                    <label>County:</label>
-                    <div class="ui input">
-                      <input id="txtCounty3" type="text">
-                    </div>
-                  </div>
-
-                  <div class="field">
-                    <label>City:</label>
-                    <div class="ui input">
-                      <input id="txtCity3" type="text">
-                    </div>
-                  </div>
-
-                  <div class="field">
-                    <label>Zip Code:</label>
-                    <div class="ui input">
-                      <input id="txtZipCode3" type="text">
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="padding"></div>
-            </div>
+          
+          <!-- Strict Bounds
+          ===========================================-->
+          <span data-modal="strict" class="ui top attached fluid primary button">Strict Bounds</span>
+          <div class="ui bottom attached segment">
+            <pre class="m-0">
+              $(<span class="text-green text-darken-1">"#txtAddress5"</span>).geocomplete({
+                <b>geolocate    : true,</b>
+                <b>strictBounds : true</b>
+              });
+            </pre>
           </div>
 
           <div data-modal="strict" class="ui small modal">
@@ -289,16 +286,16 @@
             <div class="content p-2">
               <div class="ui form">
                 <div class="field">
-                  <label>Address:</label>
+                  <label>Street Address:</label>
                   <div class="ui input">
-                    <input id="txtAddress4" type="text" placeholder="Start typing an address">
+                    <input id="txtAddress5" type="text" placeholder="Start typing a street address" data-geocomplete="street address">
                   </div>
                 </div>
 
                 <div class="two fields">
                   <div class="field">
                     <label>Country:</label>
-                    <select id="ddlCountry4" class="ui dropdown">
+                    <select class="ui dropdown" data-geocomplete="country">
                       <option value="">Select Country</option>
                       <option value="1">United States</option>
                       <option value="2">Mexico</option>
@@ -310,7 +307,7 @@
                   <div class="field">
                     <label>State:</label>
                     <div class="ui input">
-                      <input id="txtState4" type="text">
+                      <input type="text" data-geocomplete="state">
                     </div>
                   </div>
                 </div>
@@ -319,29 +316,63 @@
                   <div class="field">
                     <label>County:</label>
                     <div class="ui input">
-                      <input id="txtCounty4" type="text">
+                      <input type="text" data-geocomplete="county">
                     </div>
                   </div>
 
                   <div class="field">
                     <label>City:</label>
                     <div class="ui input">
-                      <input id="txtCity4" type="text">
+                      <input type="text" data-geocomplete="city">
                     </div>
                   </div>
 
                   <div class="field">
                     <label>Zip Code:</label>
                     <div class="ui input">
-                      <input id="txtZipCode4" type="text">
+                      <input type="text" data-geocomplete="zip code">
                     </div>
                   </div>
                 </div>
               </div>
-
-              <div class="padding"></div>
             </div>
           </div>
+
+
+          <!-- Callbacks
+          ===========================================-->
+          <span data-modal="callbacks" class="ui top attached fluid primary button">Callbacks</span>
+          <div class="ui bottom attached segment">
+            <pre class="m-0">
+              $(<span class="text-green text-darken-1">"#txtAddress6"</span>).geocomplete({
+                <b>onChange</b>: function(<span class="text-orange text-darken-1">name</span>, <span class="text-orange text-darken-1">result</span>) {
+                  console.log(name, result)
+                },
+                <b>onNoResult</b>: function(<span class="text-orange text-darken-1">name</span>) {
+                  console.log(<span class="text-green text-darken-1">"Could not find a result for "</span> + name)
+                }
+              });
+            </pre>
+          </div>
+          
+          <div data-modal="callbacks" class="ui small modal">
+            <i class="close icon"></i>
+            <div class="header">
+             Callbacks
+            </div>
+
+            <div class="content p-2">
+              <div class="ui form">
+                <div class="field">
+                  <label>Street Address:</label>
+                  <div class="ui input">
+                    <input id="txtAddress6" type="text" placeholder="Start typing a street address">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 
         </div>
 
@@ -361,48 +392,40 @@
             });
 
             $("#txtAddress1").geocomplete({
-              appendToParent: true,
-              fields: {
-                txtAddress1 : "street address",
-                txtCity1    : "city",
-                txtCounty1  : "county",
-                txtState1   : "state",
-                ddlCountry1 : "country",
-                txtZipCode1 : "zipcode"
-              }
+              fields: "#myForm"
             });
+
             $("#txtAddress2").geocomplete({
-              appendToParent: false,
               fields: {
-                txtAddress2 : "street address",
-                txtCity2    : "city",
-                txtCounty2  : "county",
-                txtState2   : "state",
-                ddlCountry2 : "country",
-                txtZipCode2 : "zipcode"
+                "#txtAddress2" : "short street address",
+                "#ddlCountry2" : "short country",
+                "#txtState2"   : "short state",
+                ".txtCounty2"  : "short county",
+                ".txtCity2"    : "short city",
+                ".txtZipCode2" : "short zipcode"
               }
             });
+
             $("#txtAddress3").geocomplete({
-              appendToParent: true,
-              fields: {
-                txtAddress3 : "short street address",
-                txtCity3    : "short city",
-                txtCounty3  : "short county",
-                txtState3   : "short state",
-                ddlCountry3 : "short country",
-                txtZipCode3 : "short zipcode"
-              }
+              appendToParent: true
             });
+
             $("#txtAddress4").geocomplete({
+              appendToParent: false
+            });
+
+            $("#txtAddress5").geocomplete({
               geolocate    : true,
               strictBounds : true,
-              fields: {
-                txtAddress4 : "street address",
-                txtCity4    : "city",
-                txtCounty4  : "county",
-                txtState4   : "state",
-                ddlCountry4 : "country",
-                txtZipCode4 : "zipcode"
+              fields: "[data-modal='strict']"
+            });
+
+            $("#txtAddress6").geocomplete({
+              onChange: function(name, result) {
+                console.log(name, result)
+              },
+              onNoResult: function(name) {
+                console.log("Could not find a result for " + name)
               }
             });
           });
