@@ -18,6 +18,7 @@
     appendToParent : true,
     fields         : null,
     geolocate      : false,
+    map            : null,
     types          : ["geocode"],
 
     // Callbacks
@@ -164,6 +165,7 @@
       this.element      = element
       this.fields       = settings.fields
       this.index        = Index += 1
+      this.map          = settings.map
       this.obj          = new google.maps.places.Autocomplete(element, settings)
       this.pacContainer = null
 
@@ -180,6 +182,12 @@
 
           if (this.fields != null) {
             this.fillfields()
+          }
+
+          if (this.map != null) {
+            const location = placeDetails.geometry.location
+            const viewport = placeDetails.geometry.viewport
+            this.centermap(location || viewport)
           }
         }
       })
@@ -213,6 +221,24 @@
     // --------------------------------------------------------------------
     // Public Methods
     // --------------------------------------------------------------------
+
+    centermap(bounds) {
+      if (bounds == null) {
+        const details  = this.getplace()
+        const location = details.geometry.location
+        const viewport = details.geometry.viewport
+        bounds         = viewport || location
+      }
+
+      if (bounds instanceof google.maps.LatLngBounds) {
+        this.map.fitBounds(bounds)
+      }
+      else if (bounds instanceof google.maps.LatLng) {
+        this.map.setCenter(bounds)
+      }
+
+      return $(this.element)
+    }
 
     clearfields() {
       const fields  = this.fields
