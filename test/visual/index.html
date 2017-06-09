@@ -17,6 +17,11 @@
             max-width: 800px !important;
           }
 
+          #myMap {
+            max-width: 800px !important;
+            max-height: 800px !important;
+          }
+
           .padding {
             height: 100vh;
           }
@@ -24,7 +29,7 @@
     </head>
     <body>
 
-        <div id="pageWrapper" class="ui container py-2 px-0">
+        <div id="pageWrapper" class="ui container h-100 py-2 px-0">
           
 
           <!-- Header
@@ -374,6 +379,27 @@
           </div>
 
 
+          <!-- Google Map
+          ===========================================-->
+          <a href="#txtAddress7" class="ui top attached fluid primary button">Google Map</a>
+          <div class="ui bottom attached segment">
+            <pre class="m-0">
+              var myMap = new google.maps.Map(document.getElementById(<span class="text-green text-darken-1">"myMap"</span>), {
+                center : { lat: 37.5, lng: -120 },
+                zoom   : 6
+              });
+
+              $(<span class="text-green text-darken-1">"#txtAddress7"</span>).geocomplete({
+                map: myMap
+              });
+            </pre>
+          </div>
+          
+          <div class="ui fluid input">
+            <input id="txtAddress7" type="text" placeholder="Start typing a street address">
+          </div>
+          <div id="myMap" class="h-100 w-100 mb-2"></div>
+
         </div>
 
       
@@ -417,7 +443,7 @@
             $("#txtAddress5").geocomplete({
               geolocate    : true,
               strictBounds : true,
-              fields: "[data-modal='strict']"
+              fields       : "[data-modal='strict']"
             });
 
             $("#txtAddress6").geocomplete({
@@ -427,6 +453,15 @@
               onNoResult: function(name) {
                 console.log("Could not find a result for " + name)
               }
+            });
+
+            var myMap = new google.maps.Map(document.getElementById("myMap"), {
+              center : { lat: 37.5, lng: -120 },
+              zoom : 6
+            });
+
+            $("#txtAddress7").geocomplete({
+              map: myMap
             });
           });
         </script>

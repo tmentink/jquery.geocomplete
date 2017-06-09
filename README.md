@@ -45,6 +45,18 @@ $("#myInput").geocomplete({
 })
 ```
 
+You can also use it to center a map based on the selected location.
+```javascript
+var myMap = new google.maps.Map(document.getElementById("myMap"), {
+  center : { lat: 37.5, lng: -120 },
+  zoom : 6
+});
+
+$("#myInput").geocomplete({
+  map: myMap
+})
+```
+
 ## Documentation
 You can set the defaults at **$.fn.geocomplete.settings**
 
@@ -56,6 +68,7 @@ You can set the defaults at **$.fn.geocomplete.settings**
 | **componentRestrictions** | object | undefined | [Google's Documentation](https://developers.google.com/maps/documentation/javascript/reference#AutocompleteOptions) |
 | **fields** | object \| string | undefined | If fields is an **object**, the key indicates the field's selector while the value indicates the desired <a href="#address-types">Address Type</a>. If fields is a **string**, it will use that value as a [context](https://stackoverflow.com/a/16423239/7484422) to search for any element with a geocomplete data attribute. [See examples](http://projects.trentmentink.com/jquery_geocomplete/) |
 | **geolocate** | boolean | false | Sets the bounds based on the browser's location. |
+| **map** | google.maps.Map | undefined | The google map you would like to center based upon the selected location. |
 | **strictBounds** | boolean | false | [Google's Documentation](https://developers.google.com/maps/documentation/javascript/reference#AutocompleteOptions) |
 | **types** | Array\<string> | ["geocode"] | [Google's Documentation](https://developers.google.com/maps/documentation/javascript/reference#AutocompleteOptions) |
 
@@ -92,6 +105,7 @@ $("#myInput").geocomplete("method name", arguments)
 
 | Method | Arguments | Returns | Description |
 | --- | --- | --- | --- |
+| **center map** | LatLng \| LatLngBounds | $selector | Centers the map based on the supplied LatLng or LatLngBounds. If nothing is passed, it will use the last selected location. This is automatically called when a location is selected. |
 | **clear fields** | none | $selector | Clears all the fields. This is automatically called before filling fields. |
 | **fill fields** | none | $selector | Fills all the fields based on the last selected location. This is automatically called when a location is selected. |
 | **get bounds** | none | LatLngBounds | [Google's Documentation](https://developers.google.com/maps/documentation/javascript/reference#Autocomplete) |
