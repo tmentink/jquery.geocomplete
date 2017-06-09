@@ -1,6 +1,6 @@
 {
   "name": "jquery.geocomplete",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "A simple plugin for Google Maps Autocomplete",
   "main": "dist/jquery.geocomplete.js",
   "scripts": {

@@ -1,5 +1,5 @@
 /*!
- * jquery.geocomplete v1.1.1 (https://github.com/tmentink/jquery.geocomplete)
+ * jquery.geocomplete v1.2.0 (https://github.com/tmentink/jquery.geocomplete)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -27,6 +27,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
     appendToParent: true,
     fields: null,
     geolocate: false,
+    map: null,
     types: [ "geocode" ],
     onChange: function onChange() {},
     onNoResult: function onNoResult() {}
@@ -154,6 +155,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
       this.element = element;
       this.fields = settings.fields;
       this.index = Index += 1;
+      this.map = settings.map;
       this.obj = new google.maps.places.Autocomplete(element, settings);
       this.pacContainer = null;
       this.obj.addListener(Event.PLACE_CHANGED, function() {
@@ -165,6 +167,11 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
           settings.onChange.call($element, placeDetails.name, placeDetails);
           if (_this.fields != null) {
             _this.fillfields();
+          }
+          if (_this.map != null) {
+            var location = placeDetails.geometry.location;
+            var viewport = placeDetails.geometry.viewport;
+            _this.centermap(location || viewport);
           }
         }
       });
@@ -185,6 +192,20 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
         }, 1e3);
       }
     }
+    Geocomplete.prototype.centermap = function centermap(bounds) {
+      if (bounds == null) {
+        var details = this.getplace();
+        var location = details.geometry.location;
+        var viewport = details.geometry.viewport;
+        bounds = viewport || location;
+      }
+      if (bounds instanceof google.maps.LatLngBounds) {
+        this.map.fitBounds(bounds);
+      } else if (bounds instanceof google.maps.LatLng) {
+        this.map.setCenter(bounds);
+      }
+      return $(this.element);
+    };
     Geocomplete.prototype.clearfields = function clearfields() {
       var fields = this.fields;
       if ($.type(fields) == "string") {
