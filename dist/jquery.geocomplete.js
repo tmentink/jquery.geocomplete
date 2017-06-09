@@ -1,5 +1,5 @@
 /*!
- * jquery.geocomplete v1.1.0 (https://github.com/tmentink/jquery.geocomplete)
+ * jquery.geocomplete v1.1.1 (https://github.com/tmentink/jquery.geocomplete)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -195,6 +195,10 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
       } else if ($.type(fields) == "object") {
         for (var id in fields) {
           var $field = $(id);
+          if ($field.length == 0) {
+            _throwError(id + " was not found in DOM");
+            continue;
+          }
           FieldFunctions.clear[_getFieldType($field)]($field);
         }
       }
@@ -214,6 +218,10 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
         for (var id in fields) {
           var $field = $(id);
           var addressType = fields[id];
+          if ($field.length == 0) {
+            _throwError(id + " was not found in DOM");
+            continue;
+          }
           _setFieldValue($field, addressType, placeDetails);
         }
       }

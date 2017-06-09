@@ -1,7 +1,7 @@
 {
   "name": "jquery.geocomplete",
-  "version": "1.1.0",
-  "description": "A simple plugin for completing address forms",
+  "version": "1.1.1",
+  "description": "A simple plugin for Google Maps Autocomplete",
   "main": "dist/jquery.geocomplete.js",
   "scripts": {
     "test-all": "mocha test/unit --recursive"
