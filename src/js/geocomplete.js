@@ -226,6 +226,12 @@
       else if ($.type(fields) == "object") {
         for (let id in fields) {
           const $field = $(id)
+
+          if ($field.length == 0) {
+            _throwError(`${id} was not found in DOM`)
+            continue
+          }
+
           FieldFunctions.clear[_getFieldType($field)]($field)
         }
       }
@@ -250,6 +256,12 @@
         for (let id in fields) {
           const $field      = $(id)
           const addressType = fields[id]
+
+          if ($field.length == 0) {
+            _throwError(`${id} was not found in DOM`)
+            continue
+          }
+
           _setFieldValue($field, addressType, placeDetails)
         }
       }
