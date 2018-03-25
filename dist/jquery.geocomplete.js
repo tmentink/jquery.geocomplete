@@ -245,6 +245,18 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
           }
           _setFieldValue($field, addressType, placeDetails);
         }
+      } else if ($.type(fields) == "function") {
+          //console.log(placeDetails);
+          var address_components = placeDetails.address_components;
+          var components={};
+          jQuery.each(address_components, function(k,v1) {jQuery.each(v1.types, function(k2, v2){components[v2]=v1.short_name});});
+          components['formatted_address'] = placeDetails.formatted_address;
+          components['place_id'] = placeDetails.place_id;
+          components['url'] = placeDetails.url;
+          components['lat'] = placeDetails.geometry.location.lat();
+          components['lng'] = placeDetails.geometry.location.lng();
+          var execDynFunc = new Function(fields(components));
+          execDynFunc();
       }
       return $(this.element);
     };
