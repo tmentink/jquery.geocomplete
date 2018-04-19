@@ -14,6 +14,14 @@
   const DATA_KEY  = `gmap.${NAME}`
   const EVENT_KEY = `.${DATA_KEY}`
 
+  const AutocompleteOptions = [
+    "bounds",
+    "componentRestrictions",
+    "placeIdOnly",
+    "strictBounds",
+    "types"
+  ]
+
   const Settings = {
     appendToParent : true,
     fields         : null,
@@ -162,11 +170,19 @@
       }
       settings = $.extend(true, {}, $.fn[NAME].settings, settings)
 
+      // only copy over autocomplete options to avoid conflicts with google maps
+      const options = {}
+      Object.keys(settings).forEach((key) => {
+        if (AutocompleteOptions.indexOf(key) !== -1) {
+          options[key] = settings[key]
+        }
+      })
+
       this.element      = element
       this.fields       = settings.fields
       this.index        = Index += 1
       this.map          = settings.map
-      this.obj          = new google.maps.places.Autocomplete(element, settings)
+      this.obj          = new google.maps.places.Autocomplete(element, options)
       this.pacContainer = null
 
       // add event listenter when the place is changed

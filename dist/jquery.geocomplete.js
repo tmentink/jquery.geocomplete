@@ -1,6 +1,6 @@
 /*!
- * jquery.geocomplete v1.2.0 (https://github.com/tmentink/jquery.geocomplete)
- * Copyright 2017 Trent Mentink
+ * jquery.geocomplete v1.2.1 (https://github.com/tmentink/jquery.geocomplete)
+ * Copyright 2018 Trent Mentink
  * Licensed under MIT
  */
 
@@ -23,6 +23,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
   var NAME = "geocomplete";
   var DATA_KEY = "gmap." + NAME;
   var EVENT_KEY = "." + DATA_KEY;
+  var AutocompleteOptions = [ "bounds", "componentRestrictions", "placeIdOnly", "strictBounds", "types" ];
   var Settings = {
     appendToParent: true,
     fields: null,
@@ -152,11 +153,17 @@ if (typeof google === "undefined" || typeof google.maps === "undefined" || typeo
         settings = {};
       }
       settings = $.extend(true, {}, $.fn[NAME].settings, settings);
+      var options = {};
+      Object.keys(settings).forEach(function(key) {
+        if (AutocompleteOptions.indexOf(key) !== -1) {
+          options[key] = settings[key];
+        }
+      });
       this.element = element;
       this.fields = settings.fields;
       this.index = Index += 1;
       this.map = settings.map;
-      this.obj = new google.maps.places.Autocomplete(element, settings);
+      this.obj = new google.maps.places.Autocomplete(element, options);
       this.pacContainer = null;
       this.obj.addListener(Event.PLACE_CHANGED, function() {
         var $element = $(_this.element);
