@@ -1,14 +1,16 @@
 {
   "presets": [
     [
-      "es2015",
+      "@babel/preset-env",
       {
-        "loose": true,
+        "targets": {
+          "browsers": [
+            "last 2 versions",
+            "safari >= 7"
+          ]
+        },
         "modules": false
       }
     ]
-  ],
-  "plugins": [
-    "transform-es2015-modules-strip"
   ]
 }

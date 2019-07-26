@@ -1,38 +1,35 @@
 {
   "name": "jquery.geocomplete",
-  "version": "1.2.1",
-  "description": "A simple plugin for Google Maps Autocomplete",
-  "main": "dist/jquery.geocomplete.js",
+  "version": "2.0.0",
+  "description": "A simple jquery plugin for Google Maps Autocomplete",
+  "main": "dist/jquery.geocomplete.min.js",
+  "license": "MIT",
   "scripts": {
-    "test-all": "mocha test/unit --recursive"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/tmentink/jquery.geocomplete.git"
+    "build": "npm run build-js && npm run build-css",
+    "build-css": "node-sass --output-style compressed src/scss/main.scss > dist/jquery.geocomplete.min.css",
+    "build-js": "rollup -c"
   },
   "author": "Trent Mentink",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/tmentink/jquery.geocomplete/issues"
   },
   "homepage": "https://github.com/tmentink/jquery.geocomplete",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tmentink/jquery.geocomplete.git"
+  },
   "devDependencies": {
-    "babel-eslint": "^7.2.3",
-    "babel-plugin-transform-es2015-modules-strip": "^0.1.1",
-    "babel-preset-es2015": "^6.24.1",
-    "chai": "^4.0.1",
-    "eslint": "^3.19.0",
-    "grunt": "^1.0.1",
-    "grunt-babel": "^6.0.0",
-    "grunt-contrib-clean": "^1.1.0",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-uglify": "^3.0.1",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-eslint": "^19.0.0",
-    "grunt-sass": "^2.0.0",
-    "grunt-stamp": "^0.3.0",
-    "load-grunt-tasks": "^3.5.2",
-    "mocha": "^3.4.2",
-    "time-grunt": "^1.4.0"
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "eslint": "^6.1.0",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-config-problems": "^3.0.1",
+    "eslint-plugin-prettier": "^3.1.0",
+    "node-sass": "^4.12.0",
+    "prettier": "^1.18.2",
+    "rollup": "^1.17.0",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-uglify": "^6.0.2"
   }
 }

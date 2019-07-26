@@ -34,7 +34,6 @@ Both the compiled and minified versions can be found within the **dist/** direct
 ```
 jquery.geocomplete/
 └── dist/
-    ├── jquery.geocomplete.css
     ├── jquery.geocomplete.js
     ├── jquery.geocomplete.min.css
     └── jquery.geocomplete.min.js
@@ -140,5 +139,5 @@ $("#myInput").geocomplete("method name", arguments)
 
 ## Copyright and license
 
-- Code and documentation copyright 2017 [Trent Mentink.](http://www.trentmentink.com)
+- Code and documentation copyright 2017-2019 [Trent Mentink.](http://www.trentmentink.com)
 - Code released under the [MIT License.](https://github.com/tmentink/jquery.geocomplete/blob/master/LICENSE)

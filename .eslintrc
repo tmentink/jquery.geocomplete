@@ -1,0 +1,32 @@
+{
+  "extends": [
+    "problems",
+    "prettier"
+  ],
+  "env": {
+    "node": true,
+    "browser": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "ecmaFeatures": {
+      "impliedStrict": true,
+      "classes": true
+    },
+    "sourceType": "module",
+  },
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "trailingComma": "es5",
+        "singleQuote": true,
+        "semi": false,
+        "printWidth": 80
+      }
+    ]
+  },
+  "plugins": [
+    "prettier"
+  ]
+}
