@@ -1,5 +1,6 @@
 import babel from 'rollup-plugin-babel'
 import banner from 'rollup-plugin-banner'
+import cleanup from 'rollup-plugin-cleanup'
 import pkg from './package.json'
 import resolve from 'rollup-plugin-node-resolve'
 import { uglify } from 'rollup-plugin-uglify'
@@ -10,18 +11,20 @@ const bannerText =
   `Licensed under ${pkg.license}`
 
 export default [
+  // demo
   {
     input: 'src/js/geocomplete.js',
     output: {
       name: '$.fn.geocomplete',
-      file: `dist/${pkg.name}.js`,
-      format: 'umd',
+      file: `demo/assets/${pkg.name}.js`,
+      format: 'iife',
     },
     plugins: [
       resolve(),
       babel({
         exclude: ['node_modules/**'],
       }),
+      cleanup(),
       banner(bannerText),
     ],
   },
@@ -32,7 +35,7 @@ export default [
     output: {
       name: '$.fn.geocomplete',
       file: `dist/${pkg.name}.min.js`,
-      format: 'umd',
+      format: 'iife',
     },
     plugins: [
       resolve(),
@@ -43,19 +46,21 @@ export default [
       banner(bannerText),
     ],
   },
+
+  // compiled
   {
     input: 'src/js/geocomplete.js',
     output: {
       name: '$.fn.geocomplete',
-      file: `demo/assets/${pkg.name}.min.js`,
-      format: 'umd',
+      file: `dist/${pkg.name}.js`,
+      format: 'iife',
     },
     plugins: [
       resolve(),
       babel({
         exclude: ['node_modules/**'],
       }),
-      uglify(),
+      cleanup(),
       banner(bannerText),
     ],
   },
