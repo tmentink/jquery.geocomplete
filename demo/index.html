@@ -48,13 +48,13 @@
     <h4 class="text-center mt-8 mb-2">Click the blue buttons to view the example</h4>
 
 
-    <!-- Fields with Data Attributes 
+    <!-- Default Data Attributes 
     ===========================================-->
-    <span data-modal="data" class="ui top attached fluid primary button">Fields with Data Attributes</span>
+    <span data-modal="default" class="ui top attached fluid primary button">Default Data Attributes</span>
     <div class="ui bottom attached segment">
       <pre class="m-0">
         $(<span class="text-green text-darken-1">"#txtAddress1"</span>).geocomplete({
-          fields: <span class="text-green text-darken-1">"#myForm"</span>
+          formId: <span class="text-green text-darken-1">"#myForm"</span>
         });
 
         &lt;div id=<span class="text-green text-darken-1">"myForm"</span>&gt;
@@ -65,10 +65,10 @@
       </pre>
     </div>
 
-    <div data-modal="data" class="ui small modal">
+    <div data-modal="default" class="ui small modal">
       <i class="close icon"></i>
       <div class="header">
-        Fields with Data Attributes
+        Default Data Attributes
       </div>
 
       <div class="content p-2">
@@ -84,7 +84,7 @@
           <div class="two fields">
             <div class="field">
               <label>Country:</label>
-              <select class="ui dropdown" data-geocomplete="country">
+              <select id='ddlCountry1' class="ui dropdown" data-geocomplete="country">
                 <option value="">Select Country</option>
                 <option value="1">United States</option>
                 <option value="2">Mexico</option>
@@ -128,55 +128,56 @@
     </div>
 
 
-    <!-- Short Values
+    <!-- Custom Data Attributes 
     ===========================================-->
-    <span data-modal="short" class="ui top attached fluid primary button">Short Values and Field Object</span>
+    <span data-modal="custom" class="ui top attached fluid primary button">Custom Data Attributes</span>
     <div class="ui bottom attached segment">
       <pre class="m-0">
         $(<span class="text-green text-darken-1">"#txtAddress2"</span>).geocomplete({
-          fields: {
-            <span class="text-green text-darken-1">"#txtAddress2"</span> : <span class="text-green text-darken-1">"<b>short</b> street address"</span>,
-            <span class="text-green text-darken-1">"#ddlCountry2"</span> : <span class="text-green text-darken-1">"<b>short</b> country"</span>,
-            <span class="text-green text-darken-1">"#txtState2"</span>   : <span class="text-green text-darken-1">"<b>short</b> state"</span>,
-            <span class="text-green text-darken-1">".txtCounty2"</span>  : <span class="text-green text-darken-1">"<b>short</b> county"</span>,
-            <span class="text-green text-darken-1">".txtCity2"</span>    : <span class="text-green text-darken-1">"<b>short</b> city"</span>,
-            <span class="text-green text-darken-1">".txtZipCode2"</span> : <span class="text-green text-darken-1">"<b>short</b> zipcode"</span>
-          }
+          formId: <span class="text-green text-darken-1">"#myForm2"</span>
+          addressDataKey: <span class="text-green text-darken-1">"geo-address"</span>
         });
+
+        &lt;div id=<span class="text-green text-darken-1">"myForm2"</span>&gt;
+          &lt;input id=<span class="text-green text-darken-1">"txtAddress2"</span> <b>data-geo-address=<span class="text-green text-darken-1">"street address"</span></b> /&gt;
+          &lt;select <b>data-geo-address=<span class="text-green text-darken-1">"country"</span></b>&gt;&lt;/select&gt;
+          ...
+        &lt;/div&gt;
       </pre>
     </div>
 
-    <div data-modal="short" class="ui small modal">
+    <div data-modal="custom" class="ui small modal">
       <i class="close icon"></i>
       <div class="header">
-        Short Values
+        Custom Data Attributes
       </div>
 
       <div class="content p-2">
-        <div class="ui form">
+        <div id="myForm2" class="ui form">
           <div class="field">
             <label>Street Address:</label>
             <div class="ui input">
-              <input id="txtAddress2" type="text" placeholder="Start typing a street address">
+              <input id="txtAddress2" type="text" placeholder="Start typing a street address"
+                data-geo-address="street address">
             </div>
           </div>
 
           <div class="two fields">
             <div class="field">
               <label>Country:</label>
-              <select id="ddlCountry2" class="ui dropdown">
+              <select class="ui dropdown" data-geo-address="country">
                 <option value="">Select Country</option>
-                <option value="1">US</option>
-                <option value="2">MX</option>
-                <option value="3">CA</option>
-                <option value="4">CL</option>
+                <option value="1">United States</option>
+                <option value="2">Mexico</option>
+                <option value="3">Canada</option>
+                <option value="4">Chile</option>
               </select>
             </div>
 
             <div class="field">
               <label>State:</label>
               <div class="ui input">
-                <input id="txtState2" type="text">
+                <input type="text" data-geo-address="state">
               </div>
             </div>
           </div>
@@ -185,21 +186,21 @@
             <div class="field">
               <label>County:</label>
               <div class="ui input">
-                <input class="txtCounty2" type="text">
+                <input type="text" data-geo-address="county">
               </div>
             </div>
 
             <div class="field">
               <label>City:</label>
               <div class="ui input">
-                <input class="txtCity2" type="text">
+                <input type="text" data-geo-address="city">
               </div>
             </div>
 
             <div class="field">
               <label>Zip Code:</label>
               <div class="ui input">
-                <input class="txtZipCode2" type="text">
+                <input type="text" data-geo-address="zip code">
               </div>
             </div>
           </div>
@@ -291,7 +292,7 @@
       </div>
 
       <div class="content p-2">
-        <div class="ui form">
+        <div id="myStrictForm" class="ui form">
           <div class="field">
             <label>Street Address:</label>
             <div class="ui input">
@@ -409,10 +410,11 @@
     src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyBc2vZwqIt_JQ0RBvPhCxkDqAH5W1gh5s4"></script>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
-  <script src="../dist/jquery.geocomplete.min.js"></script>
+  <script src="../dist/jquery.geocomplete.js"></script>
   <script type="text/javascript">
     $(document).ready(function () {
       $(".ui.dropdown").dropdown();
+      $(".ui.modal").modal({ autofocus: false })
 
       $(document).on("click", ".button", function () {
         var modal = $(this).attr("data-modal");
@@ -420,18 +422,12 @@
       });
 
       $("#txtAddress1").geocomplete({
-        fields: "#myForm"
+        formId: "#myForm"
       });
 
       $("#txtAddress2").geocomplete({
-        fields: {
-          "#txtAddress2": "short street address",
-          "#ddlCountry2": "short country",
-          "#txtState2": "short state",
-          ".txtCounty2": "short county",
-          ".txtCity2": "short city",
-          ".txtZipCode2": "short zipcode"
-        }
+        formId: "#myForm2",
+        addressDataKey: "geo-address"
       });
 
       $("#txtAddress3").geocomplete({
@@ -445,7 +441,7 @@
       $("#txtAddress5").geocomplete({
         geolocate: true,
         strictBounds: true,
-        fields: "[data-modal='strict']"
+        formId: "#myStrictForm"
       });
 
       $("#txtAddress6").geocomplete({

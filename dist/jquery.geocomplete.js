@@ -1,3 +1,8 @@
+/** 
+ * jquery.geocomplete v2.0.0 (https://github.com/tmentink/jquery.geocomplete)
+ * Copyright 2017-2019 Trent Mentink
+ * Licensed under MIT
+ */
 (function (factory) {
   typeof define === 'function' && define.amd ? define(factory) :
   factory();
@@ -25,217 +30,704 @@
     return Constructor;
   }
 
-  !function ($) {
+  function _defineProperty(obj, key, value) {
+    if (key in obj) {
+      Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: true,
+        configurable: true,
+        writable: true
+      });
+    } else {
+      obj[key] = value;
+    }
+
+    return obj;
+  }
+
+  var logError = function logError(msg) {
+    /* eslint-disable no-console */
+    console.error(msg);
+  };
+
+  var SPACES = /\s+/g;
+  var SPACES_AND_UNDERSCORES = /\s+|_+/g;
+
+  var NAME = 'geocomplete';
+  var DATA_KEY = "gmap.".concat(NAME);
+  var EVENT_KEY = ".".concat(DATA_KEY);
+  var Events = {
+    FOCUS: "focus".concat(EVENT_KEY),
+    PLACE_CHANGED: 'place_changed'
+  };
+
+  var $ = window.jquery || window.$;
+
+  var _Defaults;
+  // Constants
+  // ----------------------------------------------------------------------
+
+  var Settings = {
+    APPEND_TO_PARENT: 'appendToParent',
+    FORMATS: 'formats',
+    FORM_ID: 'formId',
+    GEOLOCATE: 'geolocate',
+    INPUT_DATA_KEY: 'inputDataKey',
+    MAP: 'map',
+    ON_CHANGE: 'onChange',
+    ON_NO_RESULT: 'onNoResult'
+  };
+  var Formats = {
+    STREET_ADDRESS: function STREET_ADDRESS(placeResult) {
+      var streetNumber = placeResult.getComponentValue('street number');
+      var street = placeResult.getComponentValue('street');
+      return "".concat(streetNumber, " ").concat(street);
+    }
+  };
+  var Defaults = (_Defaults = {}, _defineProperty(_Defaults, Settings.INPUT_DATA_KEY, 'geocomplete'), _defineProperty(_Defaults, Settings.APPEND_TO_PARENT, true), _defineProperty(_Defaults, Settings.FORMATS, Formats), _defineProperty(_Defaults, Settings.FORM_ID, null), _defineProperty(_Defaults, Settings.GEOLOCATE, false), _defineProperty(_Defaults, Settings.MAP, null), _defineProperty(_Defaults, Settings.ON_CHANGE, function () {}), _defineProperty(_Defaults, Settings.ON_NO_RESULT, function () {}), _Defaults); // ----------------------------------------------------------------------
+  // Public Functions
+  // ----------------------------------------------------------------------
+
+  var getExtendedSettings = function getExtendedSettings(userSettings) {
+    var localSettings = $.fn[NAME].settings;
+    if (typeof userSettings === 'string') userSettings = {};
+    return $.extend(true, {}, Defaults, localSettings, userSettings);
+  };
+
+  var getFormats = function getFormats() {
+    return $.fn[NAME].settings[Settings.FORMATS];
+  };
+
+  var lookup = function lookup(_ref) {
+    var obj = _ref.obj,
+        query = _ref.query;
+    query = query.toLowerCase().replace(SPACES_AND_UNDERSCORES, '');
+    var key = Object.keys(obj).find(function (k) {
+      k = k.toLowerCase().replace(SPACES_AND_UNDERSCORES, '');
+      return k === query;
+    });
+    return obj[key];
+  };
+
+  // Constants
+  // ----------------------------------------------------------------------
+
+  var Properties = {
+    LONG_NAME: 'long_name',
+    SHORT_NAME: 'short_name',
+    TYPES: 'types'
+  };
+  var Types = {
+    ADMINISTRATIVE_AREA_LEVEL_1: 'administrative_area_level_1',
+    ADMINISTRATIVE_AREA_LEVEL_2: 'administrative_area_level_2',
+    ADMINISTRATIVE_AREA_LEVEL_3: 'administrative_area_level_3',
+    ADMINISTRATIVE_AREA_LEVEL_4: 'administrative_area_level_4',
+    ADMINISTRATIVE_AREA_LEVEL_5: 'administrative_area_level_5',
+    AIRPORT: 'airport',
+    COLLOQUIAL_AREA: 'colloquial_area',
+    COUNTRY: 'country',
+    INTERSECTION: 'intersection',
+    LOCALITY: 'locality',
+    NATURAL_FEATURE: 'natural_feature',
+    NEIGHBORHOOD: 'neighborhood',
+    PARK: 'park',
+    POINT_OF_INTEREST: 'point_of_interest',
+    POLITICAL: 'political',
+    POSTAL_CODE: 'postal_code',
+    POSTAL_CODE_SUFFIX: 'postal_code_suffix',
+    PREMISE: 'premise',
+    ROUTE: 'route',
+    STREET_NUMBER: 'street_number',
+    SUBLOCALITY: 'sublocality',
+    SUBPREMISE: 'subpremise'
+  };
+  var TypeAliases = {
+    CITY: Types.LOCALITY,
+    COUNTY: Types.ADMINISTRATIVE_AREA_LEVEL_2,
+    STATE: Types.ADMINISTRATIVE_AREA_LEVEL_1,
+    STREET: Types.ROUTE,
+    ZIP_CODE: Types.POSTAL_CODE,
+    ZIP_CODE_SUFFIX: Types.POSTAL_CODE_SUFFIX // ----------------------------------------------------------------------
+    // Public Functions
     // ----------------------------------------------------------------------
-    // Constants
-    // ----------------------------------------------------------------------
-    var NAME = 'geocomplete';
-    var DATA_KEY = "gmap.".concat(NAME);
-    var EVENT_KEY = ".".concat(DATA_KEY);
-    var AutocompleteOptions = ['bounds', 'componentRestrictions', 'placeIdOnly', 'strictBounds', 'types'];
-    var Settings = {
-      appendToParent: true,
-      fields: null,
-      geolocate: false,
-      map: null,
-      types: ['geocode'],
-      // Callbacks
-      onChange: function onChange() {},
-      onNoResult: function onNoResult() {}
-    };
-    var Event = {
-      FOCUS: "focus".concat(EVENT_KEY),
-      PLACE_CHANGED: 'place_changed'
-    };
-    var AddressFunctions = {
-      city: function city(details, short) {
-        return _getAddressValue({
-          placeAddress: details.address_components,
-          name: short ? 'short_name' : 'long_name',
-          type: 'locality'
-        });
-      },
-      country: function country(details, short) {
-        return _getAddressValue({
-          placeAddress: details.address_components,
-          name: short ? 'short_name' : 'long_name',
-          type: 'country'
-        });
-      },
-      county: function county(details, short) {
-        return _getAddressValue({
-          placeAddress: details.address_components,
-          name: short ? 'short_name' : 'long_name',
-          type: 'administrative_area_level_2'
-        });
-      },
-      formattedaddress: function formattedaddress(details) {
-        return details.formatted_address;
-      },
-      neighborhood: function neighborhood(details, short) {
-        return _getAddressValue({
-          placeAddress: details.address_components,
-          name: short ? 'short_name' : 'long_name',
-          type: 'neighborhood'
-        });
-      },
-      state: function state(details, short) {
-        return _getAddressValue({
-          placeAddress: details.address_components,
-          name: short ? 'short_name' : 'long_name',
-          type: 'administrative_area_level_1'
-        });
-      },
-      street: function street(details, short) {
-        return _getAddressValue({
-          placeAddress: details.address_components,
-          name: short ? 'short_name' : 'long_name',
-          type: 'route'
-        });
-      },
-      streetaddress: function streetaddress(details, short) {
-        var number = _getAddressValue({
-          placeAddress: details.address_components,
-          name: short ? 'short_name' : 'long_name',
-          type: 'street_number'
-        });
 
-        var street = _getAddressValue({
-          placeAddress: details.address_components,
-          name: short ? 'short_name' : 'long_name',
-          type: 'route'
-        });
+  };
 
-        return "".concat(number, " ").concat(street);
-      },
-      streetnumber: function streetnumber(details, short) {
-        return _getAddressValue({
-          placeAddress: details.address_components,
-          name: short ? 'short_name' : 'long_name',
-          type: 'street_number'
-        });
-      },
-      zipcode: function zipcode(details, short) {
-        return _getAddressValue({
-          placeAddress: details.address_components,
-          name: short ? 'short_name' : 'long_name',
-          type: 'postal_code'
-        });
-      },
-      zipcodesuffix: function zipcodesuffix(details, short) {
-        return _getAddressValue({
-          placeAddress: details.address_components,
-          name: short ? 'short_name' : 'long_name',
-          type: 'postal_code_suffix'
-        });
-      }
-    };
-    var FieldFunctions = {
-      clear: {
-        INPUT: function INPUT($field) {
-          $field.val('');
-        },
-        SELECT: function SELECT($field) {
-          $field.val('');
-        },
-        SEMANTIC_DROPDOWN: function SEMANTIC_DROPDOWN($field) {
-          $field.dropdown('clear');
-        }
-      },
-      set: {
-        INPUT: function INPUT($field, value) {
-          $field.val(value);
-        },
-        SELECT: function SELECT($field, value) {
-          var index = $("option:contains(".concat(value, ")"), $field)[0].index;
-          $field.prop('selectedIndex', index);
-        },
-        SEMANTIC_DROPDOWN: function SEMANTIC_DROPDOWN($field, value) {
-          $field.dropdown('set selected', value);
-        }
-      } // ----------------------------------------------------------------------
-      // Global Variables
-      // ----------------------------------------------------------------------
+  var getName = function getName(addressType) {
+    var formatted = addressType.toLowerCase().replace(SPACES, '');
+    var isShort = formatted.indexOf('short') !== -1;
+    return isShort ? Properties.SHORT_NAME : Properties.LONG_NAME;
+  };
 
-    };
-    var Index = -1;
+  var getType = function getType(addressType) {
+    var formatted = addressType.toLowerCase().replace('short', '').replace(SPACES_AND_UNDERSCORES, '');
+    var value = lookupTypeAlias(formatted);
+    if (value == null) value = lookupType(formatted);
+    return value;
+  }; // ----------------------------------------------------------------------
+  // Private Functions
+  // ----------------------------------------------------------------------
 
-    var StyleSheet = _createStyleSheet(); // ----------------------------------------------------------------------
+
+  function lookupType(query) {
+    return lookup({
+      obj: Types,
+      query: query
+    });
+  }
+
+  function lookupTypeAlias(query) {
+    return lookup({
+      obj: TypeAliases,
+      query: query
+    });
+  }
+
+  // Constants
+  // ----------------------------------------------------------------------
+
+  var Properties$1 = {
+    ADDRESS_COMPONENTS: 'address_components',
+    ADR_ADDRESS: 'adr_address',
+    ASPECTS: 'aspects',
+    FORMATTED_ADDRESS: 'formatted_address',
+    FORMATTED_PHONE_NUMBER: 'formatted_phone_number',
+    GEOMETRY: 'geometry',
+    HTML_ATTRIBUTIONS: 'html_attributions',
+    ICON: 'icon',
+    INTERNATIONAL_PHONE_NUMBER: 'international_phone_number',
+    NAME: 'name',
+    OPENING_HOURS: 'opening_hours',
+    PERMANENTLY_CLOSED: 'permanently_closed',
+    PHOTOS: 'photos',
+    PLACE_ID: 'place_id',
+    PLUS_CODE: 'plus_code',
+    PRICE_LEVEL: 'price_level',
+    RATING: 'rating',
+    REVIEWS: 'reviews',
+    TYPES: 'types',
+    URL: 'url',
+    USER_RATINGS_TOTAL: 'user_ratings_total',
+    UTC_OFFSET: 'utc_offset',
+    VICINITY: 'vicinity',
+    WEBSITE: 'website' // ----------------------------------------------------------------------
     // Class Definition
     // ----------------------------------------------------------------------
 
+  };
+
+  var PlaceResult =
+  /*#__PURE__*/
+  function () {
+    function PlaceResult(placeResult) {
+      var _this = this;
+
+      _classCallCheck(this, PlaceResult);
+
+      this.isEmpty = isEmptyResult(placeResult);
+      this.timestamp = new Date().toString();
+      if (!this.isEmpty) Object.values(Properties$1).forEach(function (prop) {
+        _this[prop] = placeResult[prop];
+      });
+    } // --------------------------------------------------------------------
+    // Public Methods
+    // --------------------------------------------------------------------
+
+
+    _createClass(PlaceResult, [{
+      key: "getComponentValue",
+      value: function getComponentValue(query) {
+        var name = getName(query);
+        var type = getType(query);
+        var component = findAddressComponent({
+          components: this[Properties$1.ADDRESS_COMPONENTS],
+          type: type
+        });
+
+        if (component == null) {
+          logError("".concat(query, " was not found in the results"));
+          return '';
+        }
+
+        return component[name];
+      }
+    }, {
+      key: "getFormatValue",
+      value: function getFormatValue(query) {
+        var format = lookupFormat(query);
+        if (format != null) return format(this);
+      }
+    }, {
+      key: "getPropertyValue",
+      value: function getPropertyValue(query) {
+        var prop = lookupProperty(query);
+        if (prop != null) return this[prop];
+      }
+    }, {
+      key: "getLocation",
+      value: function getLocation() {
+        var geometry = this[Properties$1.GEOMETRY] || {};
+        return geometry.location;
+      }
+    }, {
+      key: "getValue",
+      value: function getValue(query) {
+        var format = lookupFormat(query);
+        if (format != null) return format(this);
+        var prop = lookupProperty(query);
+        if (prop != null) return this[prop];
+        return this.getComponentValue(query);
+      }
+    }, {
+      key: "getViewport",
+      value: function getViewport() {
+        var geometry = this[Properties$1.GEOMETRY] || {};
+        return geometry.viewport;
+      }
+    }]);
+
+    return PlaceResult;
+  }(); // ----------------------------------------------------------------------
+  // Private Functions
+  // ----------------------------------------------------------------------
+
+
+  function findAddressComponent(_ref) {
+    var components = _ref.components,
+        type = _ref.type;
+    return components.find(function (c) {
+      return c.types[0] === type;
+    });
+  }
+
+  function isEmptyResult(placeResult) {
+    return Object.keys(placeResult).length <= 1;
+  }
+
+  function lookupFormat(query) {
+    return lookup({
+      obj: getFormats(),
+      query: query
+    });
+  }
+
+  function lookupProperty(query) {
+    return lookup({
+      obj: Properties$1,
+      query: query
+    });
+  }
+
+  var isGoogleMap = function isGoogleMap(val) {
+    return val instanceof window.google.maps.Map;
+  };
+
+  var isLatLng = function isLatLng(val) {
+    return val instanceof window.google.maps.LatLng;
+  };
+
+  var isLatLngBounds = function isLatLngBounds(val) {
+    return val instanceof window.google.maps.LatLngBounds;
+  };
+
+  var isPlaceResult = function isPlaceResult(val) {
+    return val instanceof PlaceResult;
+  };
+
+  // Class Definition
+  // ----------------------------------------------------------------------
+
+  var Input =
+  /*#__PURE__*/
+  function () {
+    function Input(_ref) {
+      var element = _ref.element,
+          form = _ref.form;
+
+      _classCallCheck(this, Input);
+
+      var inputDataKey = form.inputDataKey;
+      this.$element = $(element);
+      this.dataKey = this.$element.data(inputDataKey);
+      this.element = element;
+      this.form = form;
+      this.type = getType$1(element);
+      this.value = null;
+    } // --------------------------------------------------------------------
+    // Public Methods
+    // --------------------------------------------------------------------
+
+
+    _createClass(Input, [{
+      key: "clear",
+      value: function clear() {
+        var _this = this;
+
+        var Types = {
+          INPUT: function INPUT() {
+            _this.$element.val('');
+          },
+          SELECT: function SELECT() {
+            _this.$element.val('');
+          },
+          SEMANTIC_DROPDOWN: function SEMANTIC_DROPDOWN() {
+            _this.$element.dropdown('clear');
+          }
+        };
+        this.value = null;
+        return Types[this.type]();
+      }
+    }, {
+      key: "setValue",
+      value: function setValue(value) {
+        var _this2 = this;
+
+        var Types = {
+          INPUT: function INPUT(value) {
+            _this2.$element.val(value);
+          },
+          SELECT: function SELECT(value) {
+            var index = $("option:contains(".concat(value, ")"), _this2.$element)[0].index;
+
+            _this2.$element.prop('selectedIndex', index);
+          },
+          SEMANTIC_DROPDOWN: function SEMANTIC_DROPDOWN(value) {
+            _this2.$element.dropdown('set selected', value);
+          }
+        };
+        this.value = value;
+        return Types[this.type](value);
+      }
+    }]);
+
+    return Input;
+  }(); // ----------------------------------------------------------------------
+  // Private Functions
+  // ----------------------------------------------------------------------
+
+
+  function getType$1(element) {
+    return isSemanticDropdown(element) ? 'SEMANTIC_DROPDOWN' : element.nodeName;
+  }
+
+  function isSemanticDropdown(element) {
+    var eClasses = element.classList;
+    var pClasses = element.parentElement.classList;
+    return eClasses.contains('ui') && eClasses.contains('dropdown') || pClasses.contains('ui') && pClasses.contains('dropdown');
+  }
+
+  // Class Definition
+  // ----------------------------------------------------------------------
+
+  var Form =
+  /*#__PURE__*/
+  function () {
+    function Form(geocomplete, settings) {
+      _classCallCheck(this, Form);
+
+      this.id = settings[Settings.FORM_ID];
+      this.element = document.getElementById(this.id.replace('#', ''));
+      this.geocomplete = geocomplete;
+      this.inputDataKey = settings[Settings.INPUT_DATA_KEY];
+      this.inputs = [];
+      this.createInputs();
+    } // --------------------------------------------------------------------
+    // Public Methods
+    // --------------------------------------------------------------------
+
+
+    _createClass(Form, [{
+      key: "createInputs",
+      value: function createInputs() {
+        var _this = this;
+
+        this.inputs = [];
+        var query = "[data-".concat(this.inputDataKey, "]");
+        var inputElements = this.element.querySelectorAll(query);
+        inputElements.forEach(function (element) {
+          _this.inputs.push(new Input({
+            element: element,
+            form: _this
+          }));
+        });
+      }
+    }, {
+      key: "clear",
+      value: function clear() {
+        this.inputs.forEach(function (input) {
+          return input.clear();
+        });
+        return this.geocomplete.$element;
+      }
+    }, {
+      key: "fill",
+      value: function fill(placeResult) {
+        this.clear();
+
+        if (!isPlaceResult(placeResult)) {
+          placeResult = new PlaceResult(placeResult);
+        }
+
+        this.inputs.forEach(function (input) {
+          var value = placeResult.getValue(input.dataKey);
+          input.setValue(value);
+        });
+        return this.geocomplete.$element;
+      }
+    }, {
+      key: "getValues",
+      value: function getValues(query) {
+        var values = {};
+        this.inputs.forEach(function (input) {
+          values[input.dataKey] = input.value;
+        });
+        return query ? values[query] : values;
+      }
+    }]);
+
+    return Form;
+  }();
+
+  // ----------------------------------------------------------------------
+  // Class Definition
+  // ----------------------------------------------------------------------
+  var StyleSheet =
+  /*#__PURE__*/
+  function () {
+    function StyleSheet() {
+      _classCallCheck(this, StyleSheet);
+
+      this.styleSheet = document.createElement('style');
+      this.styleSheet.type = 'text/css';
+      document.head.appendChild(this.styleSheet);
+    } // --------------------------------------------------------------------
+    // Public Methods
+    // --------------------------------------------------------------------
+
+
+    _createClass(StyleSheet, [{
+      key: "addCSS",
+      value: function addCSS(css) {
+        this.styleSheet.innerHTML += css;
+      }
+    }]);
+
+    return StyleSheet;
+  }();
+
+  // ----------------------------------------------------------------------
+  // Constants
+  // ----------------------------------------------------------------------
+  var Options = {
+    BOUNDS: 'bounds',
+    COMPONENT_RESTRICTIONS: 'componentRestrictions',
+    FIELDS: 'fields',
+    PLACE_ID_ONLY: 'placeIdOnly',
+    STRICT_BOUNDS: 'strictBounds',
+    TYPES: 'types' // ----------------------------------------------------------------------
+    // Class Definition
+    // ----------------------------------------------------------------------
+
+  };
+
+  var Autocomplete =
+  /*#__PURE__*/
+  function () {
+    function Autocomplete(geocomplete, settings) {
+      _classCallCheck(this, Autocomplete);
+
+      var options = getOptions(settings);
+      this.$element = geocomplete.$element;
+      this.eventListeners = [];
+      this.geocomplete = geocomplete;
+      this.obj = new window.google.maps.places.Autocomplete(this.$element[0], options);
+    } // --------------------------------------------------------------------
+    // Public Methods
+    // --------------------------------------------------------------------
+
+
+    _createClass(Autocomplete, [{
+      key: "addListener",
+      value: function addListener(eventName, handler) {
+        var listener = this.obj.addListener(eventName, handler);
+        this.eventListeners.push(listener);
+        return listener;
+      }
+    }, {
+      key: "getBounds",
+      value: function getBounds() {
+        return this.obj.getBounds();
+      }
+    }, {
+      key: "getFields",
+      value: function getFields() {
+        return this.obj.getFields();
+      }
+    }, {
+      key: "getPlace",
+      value: function getPlace() {
+        return this.obj.getPlace();
+      }
+    }, {
+      key: "removeListeners",
+      value: function removeListeners() {
+        this.eventListeners.forEach(function (e) {
+          return e.remove();
+        });
+        return this.$element;
+      }
+    }, {
+      key: "setBounds",
+      value: function setBounds(parms) {
+        this.obj.setBounds(parms);
+        return this.$element;
+      }
+    }, {
+      key: "setComponentRestrictions",
+      value: function setComponentRestrictions(parms) {
+        this.obj.setComponentRestrictions(parms);
+        return this.$element;
+      }
+    }, {
+      key: "setFields",
+      value: function setFields(parms) {
+        this.obj.setFields(parms);
+        return this.$element;
+      }
+    }, {
+      key: "setOptions",
+      value: function setOptions(parms) {
+        this.obj.setOptions(parms);
+        return this.$element;
+      }
+    }, {
+      key: "setTypes",
+      value: function setTypes(parms) {
+        this.obj.setTypes(parms);
+        return this.$element;
+      }
+    }]);
+
+    return Autocomplete;
+  }(); // ----------------------------------------------------------------------
+  // Private Functions
+  // ----------------------------------------------------------------------
+
+
+  function getOptions(settings) {
+    var options = {};
+    var AutocompleteOptions = Object.values(Options);
+    Object.keys(settings).forEach(function (key) {
+      if (AutocompleteOptions.indexOf(key) !== -1) {
+        options[key] = settings[key];
+      }
+    });
+    return options;
+  }
+
+  // Class Definition
+  // ----------------------------------------------------------------------
+
+  var PacContainer = function PacContainer(geocomplete, settings) {
+    var _this = this;
+
+    _classCallCheck(this, PacContainer);
+
+    this.element = null;
+    this.geocomplete = geocomplete;
+    this.styleSheet = geocomplete.styleSheet;
+
+    if (settings[Settings.APPEND_TO_PARENT]) {
+      var _this$geocomplete = this.geocomplete,
+          $geo = _this$geocomplete.$element,
+          index = _this$geocomplete.index;
+      $geo.on(Events.FOCUS, function () {
+        _this.element = document.getElementsByClassName('pac-container')[index];
+
+        if (_this.element != null) {
+          appendToParent({
+            $geo: $geo,
+            element: _this.element,
+            styleSheet: _this.styleSheet
+          });
+          $geo.off(Events.FOCUS);
+        }
+      });
+    }
+  }; // ----------------------------------------------------------------------
+  // Private Functions
+  // ----------------------------------------------------------------------
+
+
+  function appendToParent(_ref) {
+    var $geo = _ref.$geo,
+        element = _ref.element,
+        styleSheet = _ref.styleSheet;
+    var left = "".concat(calcLeftPosition($geo), "px !important");
+    var top = "".concat(calcTopPosition($geo), "px !important");
+    element.id = "pac-container_".concat($geo[0].id);
+    styleSheet.addCSS("#".concat(element.id, "{top:").concat(top, "; left:").concat(left, ";}"));
+    $geo.parent().css({
+      position: 'relative'
+    }).append(element);
+  }
+
+  function calcLeftPosition($geo) {
+    var element_left = $geo.offset().left;
+    var parent_left = $geo.parent().offset().left;
+    return element_left - parent_left;
+  }
+
+  function calcTopPosition($geo) {
+    var element_top = $geo.offset().top;
+    var element_height = $geo.outerHeight();
+    var parent_top = $geo.parent().offset().top;
+    return element_top - parent_top + element_height;
+  }
+
+  !function ($) {
+    // ----------------------------------------------------------------------
+    // Global Variables
+    // ----------------------------------------------------------------------
+    var Index = -1;
+    var GlobalStyleSheet = new StyleSheet(); // ----------------------------------------------------------------------
+    // Class Definition
+    // ----------------------------------------------------------------------
 
     var Geocomplete =
     /*#__PURE__*/
     function () {
-      function Geocomplete(element, settings) {
+      function Geocomplete($element, userSettings) {
         var _this = this;
 
         _classCallCheck(this, Geocomplete);
 
-        if (typeof settings === 'string') {
-          settings = {};
-        }
-
-        settings = $.extend(true, {}, $.fn[NAME].settings, settings); // only copy over autocomplete options to avoid conflicts with google maps
-
-        var options = {};
-        Object.keys(settings).forEach(function (key) {
-          if (AutocompleteOptions.indexOf(key) !== -1) {
-            options[key] = settings[key];
-          }
-        });
-        this.element = element;
-        this.fields = settings.fields;
+        var settings = getExtendedSettings(userSettings);
+        this.$element = $element;
+        this.form = null;
         this.index = Index += 1;
-        this.map = settings.map;
-        this.obj = new google.maps.places.Autocomplete(element, options);
-        this.pacContainer = null; // add event listenter when the place is changed
+        this.map = settings[Settings.MAP];
+        this.placeResult = null;
+        this.styleSheet = GlobalStyleSheet; // these need to be executed after the other props
 
-        this.obj.addListener(Event.PLACE_CHANGED, function () {
-          var $element = $(_this.element);
+        this.autocomplete = new Autocomplete(this, settings);
+        this.pacContainer = new PacContainer(this, settings);
+        if (settings[Settings.FORM_ID]) this.form = new Form(this, settings); // listen to place changed event
 
-          var placeDetails = _this.getplace();
+        this.autocomplete.addListener(Events.PLACE_CHANGED, function () {
+          var $element = _this.$element;
 
-          if (_isEmptyResult(placeDetails)) {
-            settings.onNoResult.call($element, placeDetails.name);
-          } else {
-            settings.onChange.call($element, placeDetails.name, placeDetails);
+          var rawResult = _this.getplace();
 
-            if (_this.fields != null) {
-              _this.fillfields();
-            }
+          if (_this.placeResult.isEmpty) return settings[Settings.ON_NO_RESULT].call($element, rawResult.name);
+          settings[Settings.ON_CHANGE].call($element, rawResult.name, rawResult);
 
-            if (_this.map != null) {
-              var location = placeDetails.geometry.location;
-              var viewport = placeDetails.geometry.viewport;
+          _this.centermap();
 
-              _this.centermap(location || viewport);
-            }
-          }
+          _this.fillform();
         }); // bias the search results based on the browser's geolocation
 
-        if (settings.geolocate) {
-          _geoLocate(this.obj);
-        }
-
-        if (settings.appendToParent) {
-          // append the .pac-container to element's parent
-          $(element).on(Event.FOCUS, function () {
-            var $element = $(this);
-            var geo = $element.data(DATA_KEY);
-
-            if (geo.pacContainer != null) {
-              _appendContainer($element, geo.pacContainer);
-
-              $element.off(Event.FOCUS);
-            }
-          }); // delay function to ensure pac-container exists in DOM
-
-          setTimeout(function () {
-            _this.pacContainer = $('.pac-container')[_this.index];
-          }, 1000);
-        }
+        if (settings[Settings.GEOLOCATE]) this.geolocate();
       } // --------------------------------------------------------------------
       // Public Methods
       // --------------------------------------------------------------------
@@ -244,135 +736,136 @@
       _createClass(Geocomplete, [{
         key: "centermap",
         value: function centermap(bounds) {
+          if (this.map == null || !isGoogleMap(this.map)) return;
+
           if (bounds == null) {
-            var details = this.getplace();
-            var location = details.geometry.location;
-            var viewport = details.geometry.viewport;
+            if (this.placeResult == null) this.getplace();
+            var location = this.placeResult.getLocation();
+            var viewport = this.placeResult.getViewport();
             bounds = viewport || location;
           }
 
-          if (bounds instanceof google.maps.LatLngBounds) {
+          if (isLatLngBounds(bounds)) {
             this.map.fitBounds(bounds);
-          } else if (bounds instanceof google.maps.LatLng) {
+            return this.$element;
+          }
+
+          if (isLatLng(bounds)) {
             this.map.setCenter(bounds);
+            return this.$element;
           }
-
-          return $(this.element);
         }
       }, {
-        key: "clearfields",
-        value: function clearfields() {
-          var fields = this.fields;
-
-          if ($.type(fields) === 'string') {
-            $("[data-".concat(NAME, "]"), $(this.fields)).each(function () {
-              var $field = $(this);
-
-              FieldFunctions.clear[_getFieldType($field)]($field);
-            });
-          } else if ($.type(fields) === 'object') {
-            for (var id in fields) {
-              var $field = $(id);
-
-              if ($field.length === 0) {
-                _throwError("".concat(id, " was not found in DOM"));
-
-                continue;
-              }
-
-              FieldFunctions.clear[_getFieldType($field)]($field);
-            }
-          }
-
-          return $(this.element);
+        key: "clearform",
+        value: function clearform() {
+          if (this.form == null) return;
+          return this.form.clear();
         }
       }, {
-        key: "fillfields",
-        value: function fillfields() {
-          this.clearfields();
-          var fields = this.fields;
-          var placeDetails = this.obj.getPlace();
-
-          if ($.type(fields) === 'string') {
-            $("[data-".concat(NAME, "]"), $(this.fields)).each(function () {
-              var $field = $(this);
-              var addressType = $field.data(NAME);
-
-              _setFieldValue($field, addressType, placeDetails);
-            });
-          } else if ($.type(fields) === 'object') {
-            for (var id in fields) {
-              var $field = $(id);
-              var addressType = fields[id];
-
-              if ($field.length === 0) {
-                _throwError("".concat(id, " was not found in DOM"));
-
-                continue;
-              }
-
-              _setFieldValue($field, addressType, placeDetails);
-            }
-          }
-
-          return $(this.element);
+        key: "destroy",
+        value: function destroy() {
+          this.autocomplete.removeListeners();
         }
+      }, {
+        key: "fillform",
+        value: function fillform(placeResult) {
+          if (this.form == null) return;
+          placeResult = placeResult || this.placeResult;
+          return this.form.fill(placeResult);
+        }
+      }, {
+        key: "geolocate",
+        value: function geolocate() {
+          var _this2 = this;
+
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+              var circle = new window.google.maps.Circle({
+                center: {
+                  lat: position.coords.latitude,
+                  lng: position.coords.longitude
+                },
+                radius: position.coords.accuracy
+              });
+
+              _this2.autocomplete.setBounds(circle.getBounds());
+            });
+          }
+        }
+      }, {
+        key: "getcachedplace",
+        value: function getcachedplace() {
+          return this.placeResult;
+        }
+      }, {
+        key: "getformvalues",
+        value: function getformvalues(query) {
+          if (this.form == null) return;
+          return this.form.getValues(query);
+        } // --------------------------------------------------------------------
+        // Google Autocomplete Methods
+        // --------------------------------------------------------------------
+
       }, {
         key: "getbounds",
         value: function getbounds() {
-          return this.obj.getBounds();
+          return this.autocomplete.getBounds();
+        }
+      }, {
+        key: "getfields",
+        value: function getfields() {
+          return this.autocomplete.getFields();
         }
       }, {
         key: "getplace",
         value: function getplace() {
-          return this.obj.getPlace();
+          var rawResult = this.autocomplete.getPlace();
+          this.placeResult = new PlaceResult(rawResult);
+          return rawResult;
         }
       }, {
         key: "setbounds",
         value: function setbounds(parms) {
-          this.obj.setBounds(parms);
-          return $(this.element);
+          return this.autocomplete.setBounds(parms);
         }
       }, {
         key: "setcomponentrestrictions",
         value: function setcomponentrestrictions(parms) {
-          this.obj.setComponentRestrictions(parms);
-          return $(this.element);
+          return this.autocomplete.setComponentRestrictions(parms);
+        }
+      }, {
+        key: "setfields",
+        value: function setfields(parms) {
+          return this.autocomplete.setFields(parms);
         }
       }, {
         key: "setoptions",
         value: function setoptions(parms) {
-          this.obj.setOptions(parms);
-          return $(this.element);
+          return this.autocomplete.setOptions(parms);
         }
       }, {
         key: "settypes",
         value: function settypes(parms) {
-          this.obj.setTypes(parms);
-          return $(this.element);
+          return this.autocomplete.setTypes(parms);
         } // --------------------------------------------------------------------
         // Static Methods
         // --------------------------------------------------------------------
 
       }], [{
         key: "_jQueryInterface",
-        value: function _jQueryInterface(settings, parms) {
+        value: function _jQueryInterface(userSettings, parms) {
           var $element = $(this);
           var geo = $element.data(DATA_KEY);
 
           if (!geo) {
-            geo = new Geocomplete(this[0], settings);
+            geo = new Geocomplete($element, userSettings);
             $element.data(DATA_KEY, geo);
           }
 
-          if (typeof settings === 'string') {
-            var method = settings.toLowerCase().replace(/\s+/g, '');
-
-            if (geo[method]) {
-              return geo[method](parms);
-            }
-
-            _throwError("\"".concat(settings, "\" is not a valid method"));
+          if (typeof userSettings === 'string') {
+            var method = userSettings.toLowerCase().replace(SPACES, '');
+            if (geo[method]) return geo[method](parms);
+            logError("\"".concat(userSettings, "\" is not a valid method"));
           }
 
           return this;
@@ -380,109 +873,14 @@
       }]);
 
       return Geocomplete;
-    }(); // ----------------------------------------------------------------------
-    // Private Functions
-    // ----------------------------------------------------------------------
-
-
-    function _appendContainer($element, $pacContainer) {
-      var left = "".concat(_calcLeftPosition($element), "px !important");
-      var top = "".concat(_calcTopPosition($element), "px !important");
-      $pacContainer.id = "pac-container_".concat($element[0].id);
-      StyleSheet.innerHTML += "#".concat($pacContainer.id, "{top:").concat(top, "; left:").concat(left, ";}");
-      $element.parent().css({
-        position: 'relative'
-      }).append($pacContainer);
-    }
-
-    function _calcLeftPosition($element) {
-      var element_left = $element.offset().left;
-      var parent_left = $element.parent().offset().left;
-      return element_left - parent_left;
-    }
-
-    function _calcTopPosition($element) {
-      var element_top = $element.offset().top;
-      var element_height = $element.outerHeight();
-      var parent_top = $element.parent().offset().top;
-      return element_top - parent_top + element_height;
-    }
-
-    function _createStyleSheet() {
-      var style = document.createElement('style');
-      style.type = 'text/css';
-      $('head')[0].appendChild(style);
-      return style;
-    }
-
-    function _geoLocate(obj) {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function (position) {
-          var circle = new google.maps.Circle({
-            center: {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            },
-            radius: position.coords.accuracy
-          });
-          obj.setBounds(circle.getBounds());
-        });
-      }
-    }
-
-    function _getAddressValue(parms) {
-      var placeAddress = parms.placeAddress || [];
-      var name = parms.name;
-      var type = parms.type;
-      var i = placeAddress.map(function (address) {
-        return address.types[0] === type;
-      }).indexOf(true);
-      return i !== -1 ? placeAddress[i][name] : '';
-    }
-
-    function _getFieldType($field) {
-      return _isSemanticDropdown($field) ? 'SEMANTIC_DROPDOWN' : $field.prop('nodeName');
-    }
-
-    function _isEmptyResult(placeDetails) {
-      return Object.keys(placeDetails).length <= 1;
-    }
-
-    function _isSemanticDropdown($field) {
-      var $parent = $field.parent();
-
-      if ($field.hasClass('ui') && $field.hasClass('dropdown') || $parent.hasClass('ui') && $parent.hasClass('dropdown')) {
-        return true;
-      }
-
-      return false;
-    }
-
-    function _setFieldValue($field, addressType, placeDetails) {
-      addressType = addressType.toLowerCase().replace(/\s+/g, '');
-      var short = addressType.indexOf('short') !== -1;
-      addressType = addressType.replace('short', '');
-
-      if (AddressFunctions[addressType]) {
-        var value = AddressFunctions[addressType](placeDetails, short);
-
-        FieldFunctions.set[_getFieldType($field)]($field, value);
-      } else {
-        _throwError("".concat(addressType, " is not a valid address type"));
-      }
-    }
-
-    function _throwError(message) {
-      /* eslint-disable no-console */
-      console.error(message);
-    } // ------------------------------------------------------------------------
+    }(); // ------------------------------------------------------------------------
     // jQuery
     // ------------------------------------------------------------------------
 
 
     $.fn[NAME] = Geocomplete._jQueryInterface;
     $.fn[NAME].Constructor = Geocomplete;
-    $.fn[NAME].settings = Settings;
+    $.fn[NAME].settings = Defaults;
     return $;
   }(window.jQuery || window.$);
 
