@@ -25,12 +25,29 @@ export default [
       banner(bannerText),
     ],
   },
+
   // minified
   {
     input: 'src/js/geocomplete.js',
     output: {
       name: '$.fn.geocomplete',
       file: `dist/${pkg.name}.min.js`,
+      format: 'umd',
+    },
+    plugins: [
+      resolve(),
+      babel({
+        exclude: ['node_modules/**'],
+      }),
+      uglify(),
+      banner(bannerText),
+    ],
+  },
+  {
+    input: 'src/js/geocomplete.js',
+    output: {
+      name: '$.fn.geocomplete',
+      file: `demo/assets/${pkg.name}.min.js`,
       format: 'umd',
     },
     plugins: [

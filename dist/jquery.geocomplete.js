@@ -84,7 +84,7 @@
       return "".concat(streetNumber, " ").concat(street);
     }
   };
-  var Defaults = (_Defaults = {}, _defineProperty(_Defaults, Settings.INPUT_DATA_KEY, 'geocomplete'), _defineProperty(_Defaults, Settings.APPEND_TO_PARENT, true), _defineProperty(_Defaults, Settings.FORMATS, Formats), _defineProperty(_Defaults, Settings.FORM_ID, null), _defineProperty(_Defaults, Settings.GEOLOCATE, false), _defineProperty(_Defaults, Settings.MAP, null), _defineProperty(_Defaults, Settings.ON_CHANGE, function () {}), _defineProperty(_Defaults, Settings.ON_NO_RESULT, function () {}), _Defaults); // ----------------------------------------------------------------------
+  var Defaults = (_Defaults = {}, _defineProperty(_Defaults, Settings.APPEND_TO_PARENT, true), _defineProperty(_Defaults, Settings.FORMATS, Formats), _defineProperty(_Defaults, Settings.FORM_ID, null), _defineProperty(_Defaults, Settings.GEOLOCATE, false), _defineProperty(_Defaults, Settings.INPUT_DATA_KEY, 'geocomplete'), _defineProperty(_Defaults, Settings.MAP, null), _defineProperty(_Defaults, Settings.ON_CHANGE, function () {}), _defineProperty(_Defaults, Settings.ON_NO_RESULT, function () {}), _Defaults); // ----------------------------------------------------------------------
   // Public Functions
   // ----------------------------------------------------------------------
 

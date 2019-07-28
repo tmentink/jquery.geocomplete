@@ -5,9 +5,12 @@
   "main": "dist/jquery.geocomplete.min.js",
   "license": "MIT",
   "scripts": {
-    "build": "npm run build-js && npm run build-css",
-    "build-css": "node-sass --output-style compressed src/scss/main.scss > dist/jquery.geocomplete.min.css",
-    "build-js": "rollup -c"
+    "dev": "npm run build:demo && npm run watch:js",
+    "build": "npm run build:js && npm run build:css",
+    "build:css": "node-sass --output-style compressed src/scss/main.scss > dist/jquery.geocomplete.min.css",
+    "build:demo": "node-sass --output-style compressed src/scss/main.scss > demo/assets/jquery.geocomplete.min.css",
+    "build:js": "rollup -c",
+    "watch:js": "rollup -c -w"
   },
   "author": "Trent Mentink",
   "bugs": {
