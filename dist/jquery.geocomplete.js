@@ -1,5 +1,5 @@
 /**
- * jquery.geocomplete v2.0.2 (https://github.com/tmentink/jquery.geocomplete)
+ * jquery.geocomplete v2.1.0 (https://github.com/tmentink/jquery.geocomplete)
  * Copyright 2017-2019 Trent Mentink
  * Licensed under MIT
  */
@@ -73,6 +73,18 @@
     ON_NO_RESULT: 'onNoResult'
   };
   var Formats = {
+    LAT: function LAT(placeResult) {
+      var location = placeResult.getLocation();
+      return location.lat();
+    },
+    LAT_LNG: function LAT_LNG(placeResult) {
+      var location = placeResult.getLocation();
+      return location.toUrlValue();
+    },
+    LNG: function LNG(placeResult) {
+      var location = placeResult.getLocation();
+      return location.lng();
+    },
     STREET_ADDRESS: function STREET_ADDRESS(placeResult) {
       var streetNumber = placeResult.getComponentValue('street number');
       var street = placeResult.getComponentValue('street');

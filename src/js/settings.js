@@ -17,6 +17,18 @@ const Settings = {
 }
 
 const Formats = {
+  LAT(placeResult) {
+    const location = placeResult.getLocation()
+    return location.lat()
+  },
+  LAT_LNG(placeResult) {
+    const location = placeResult.getLocation()
+    return location.toUrlValue()
+  },
+  LNG(placeResult) {
+    const location = placeResult.getLocation()
+    return location.lng()
+  },
   STREET_ADDRESS(placeResult) {
     const streetNumber = placeResult.getComponentValue('street number')
     const street = placeResult.getComponentValue('street')
