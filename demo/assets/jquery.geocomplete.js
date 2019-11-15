@@ -1,8 +1,9 @@
-/** 
- * jquery.geocomplete v2.0.0 (https://github.com/tmentink/jquery.geocomplete)
+/**
+ * jquery.geocomplete v2.0.2 (https://github.com/tmentink/jquery.geocomplete)
  * Copyright 2017-2019 Trent Mentink
  * Licensed under MIT
  */
+
 (function () {
   'use strict';
 

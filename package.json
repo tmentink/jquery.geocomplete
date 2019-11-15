@@ -1,6 +1,6 @@
 {
   "name": "jquery.geocomplete",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A simple jquery plugin for Google Maps Autocomplete",
   "main": "dist/jquery.geocomplete.min.js",
   "license": "MIT",
@@ -22,19 +22,19 @@
     "url": "https://github.com/tmentink/jquery.geocomplete.git"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
-    "eslint": "^6.1.0",
-    "eslint-config-prettier": "^6.0.0",
+    "@babel/core": "^7.7.2",
+    "@babel/preset-env": "^7.7.1",
+    "eslint": "^6.6.0",
+    "eslint-config-prettier": "^6.5.0",
     "eslint-config-problems": "^3.0.1",
-    "eslint-plugin-prettier": "^3.1.0",
-    "node-sass": "^4.12.0",
-    "prettier": "^1.18.2",
-    "rollup": "^1.17.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "node-sass": "^4.13.0",
+    "prettier": "^1.19.1",
+    "rollup": "^1.27.0",
     "rollup-plugin-babel": "^4.3.3",
-    "rollup-plugin-banner": "^0.2.0",
+    "rollup-plugin-banner": "^0.2.1",
     "rollup-plugin-cleanup": "^3.1.1",
     "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-uglify": "^6.0.2"
+    "rollup-plugin-uglify": "^6.0.3"
   }
 }
