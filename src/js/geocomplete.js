@@ -88,6 +88,7 @@ class Geocomplete {
   }
 
   destroy() {
+    this.$element.removeData(DATA_KEY)
     this.autocomplete.removeListeners()
   }
 

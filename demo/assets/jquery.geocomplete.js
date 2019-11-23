@@ -1,5 +1,5 @@
 /**
- * jquery.geocomplete v2.1.0 (https://github.com/tmentink/jquery.geocomplete)
+ * jquery.geocomplete v2.1.1 (https://github.com/tmentink/jquery.geocomplete)
  * Copyright 2017-2019 Trent Mentink
  * Licensed under MIT
  */
@@ -630,6 +630,7 @@
     }, {
       key: "destroy",
       value: function destroy() {
+        this.$element.removeData(DATA_KEY);
         this.autocomplete.removeListeners();
       }
     }, {
