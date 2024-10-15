@@ -8,8 +8,6 @@
 
   <p align="center">
     A jQuery plugin for Google Maps Autocomplete.
-    <br>
-    <a href="http://projects.trentmentink.com/jquery_geocomplete/"><strong>View Demo &raquo;</strong></a>
   </p>
 </p>
 
@@ -21,7 +19,6 @@
 - [Basic usage](#basic-usage)
 - [Documentation](#documentation)
 - [Credits](#credits)
-- [Author](http://www.trentmentink.com)
 - [Copyright and license](#copyright-and-license)
 
 ## Quick start
@@ -147,10 +144,7 @@ $("#myInput").geocomplete("method name", arguments)
 ## Author
 
 **Trent Mentink**
-- <http://www.trentmentink.com>
 - <https://github.com/tmentink>
 
 ## Copyright and license
-
-- Code and documentation copyright 2017-2019 [Trent Mentink.](http://www.trentmentink.com)
 - Code released under the [MIT License.](https://github.com/tmentink/jquery.geocomplete/blob/master/LICENSE)
